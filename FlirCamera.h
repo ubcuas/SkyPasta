@@ -30,7 +30,7 @@ class FlirCamera {
 public:
     FlirCamera();
     ~FlirCamera(){;};
-    int safeExit();
+    int cleanExit();
     void switchTrigger();
     int getNumCameras();
     TriggerType getTriggerType();
@@ -41,6 +41,7 @@ public:
     int getRate(){return rate;}
     void stopAcquisition();
     void acquireImages();
+    void disableTrigger();
 
 private:
     SystemPtr system;
@@ -50,6 +51,7 @@ private:
     CameraPtr cameraPtr;
     int rate = 1; // Rate of images per second
     bool acquireNextImage = false;
+    INodeMap *nodeMap;
 };
 
 

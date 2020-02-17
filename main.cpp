@@ -53,6 +53,6 @@ int main() {
 //    cout << buffer << endl << endl;
 //    cout << "choose trigger: s or h" << endl;
 
-    flirCamera.safeExit();
+    flirCamera.cleanExit();
 }
 

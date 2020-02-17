@@ -18,6 +18,29 @@
 
 using namespace std;
 
+static const int RATE = 3; // delay between each image acquisition trigger
+
+bool stopFlag = false;
+
+void acquireImagesFixedRate(int rate, ImageRetriever ca){
+    ca.startAcquisition();
+
+    while (!stopFlag){
+        cout << "aquiring........." << endl;
+        //ca.triggerCamera();
+        auto myFuture(async(launch::async, &ImageRetriever::triggerCamera, &ca));
+        if (stopFlag){
+            break;
+        }
+        sleep(rate);
+
+        cout << endl;
+    }
+
+    ca.stopAcquisition();
+}
+
+
 
 int main() {
 
@@ -27,12 +50,18 @@ int main() {
 
         cout << "Cameras Connected: " << flirCamera.getNumCameras() << endl;
         ImageRetriever ca(flirCamera.getCamera());
+        ca.setTriggerMode(SINGLE_FRAME);
 
-        auto myFuture(async(launch::async, &ImageRetriever::startAcquisition, &ca));
+        //auto myFuture(async(launch::async, &ImageRetriever::startAcquisition, &ca));
 
-        sleep(5);
-        ca.stopAcquisition();
+        auto myFuture(async(launch::async, acquireImagesFixedRate, RATE, ca));
+
+        sleep(10);
+        stopFlag = true;
+
         myFuture.get();
+
+
         ca.releaseCamera();
 
         flirCamera.cleanExit();

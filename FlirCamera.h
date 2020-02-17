@@ -28,6 +28,7 @@ enum TriggerType
 };
 
 
+
 class FlirCamera {
 public:
     FlirCamera();
@@ -41,12 +42,14 @@ public:
     void disableTrigger();
     CameraPtr getCamera(){return this-> cameraPtr;};
 
+
 private:
     SystemPtr system;
     CameraPtr cameraPtr;
     TriggerType currentTrigger = SOFTWARE;
     CameraList cameraList;
     int numberOfCameras = 0;
+
 
 };
 #endif //FLIR_FLIRCAMERA_H

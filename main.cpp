@@ -16,12 +16,10 @@
 
 int main() {
 
-FlirCamera flirCamera;
+    FlirCamera flirCamera;
+    flirCamera.setTrigger(SOFTWARE);
 
-flirCamera.initialize();
-flirCamera.configureTrigger();
-
-cout << "Cameras Connected: " << flirCamera.getNumCameras() << endl;
+    cout << "Cameras Connected: " << flirCamera.getNumCameras() << endl;
 
 
 //    int sock = 0, valread;
@@ -55,6 +53,6 @@ cout << "Cameras Connected: " << flirCamera.getNumCameras() << endl;
 //    cout << buffer << endl << endl;
 //    cout << "choose trigger: s or h" << endl;
 
-flirCamera.safeExit();
+    flirCamera.safeExit();
 }
 

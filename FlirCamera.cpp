@@ -7,6 +7,7 @@
 
 FlirCamera::FlirCamera(){
     system = System::GetInstance();
+    initialize();
 }
 
 void FlirCamera::initialize(){
@@ -18,8 +19,8 @@ void FlirCamera::initialize(){
     }
 
     cameraPtr = cameraList.GetByIndex(0);
-    configureTrigger();
     cameraPtr -> Init();
+    configureTrigger();
 }
 
 int FlirCamera::safeExit() {

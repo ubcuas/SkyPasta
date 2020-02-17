@@ -44,21 +44,21 @@ RM = /Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/jonathanhirsch/Dropbox/UBCUAS/Flir
+CMAKE_SOURCE_DIR = /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/jonathanhirsch/Dropbox/UBCUAS/Flir/cmake-build-debug
+CMAKE_BINARY_DIR = /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug
 
 #=============================================================================
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/Flir.dir/all
+all: CMakeFiles/skypasta.dir/all
 
 .PHONY : all
 
 # The main recursive "clean" target.
-clean: CMakeFiles/Flir.dir/clean
+clean: CMakeFiles/skypasta.dir/clean
 
 .PHONY : clean
 
@@ -68,31 +68,31 @@ preinstall:
 .PHONY : preinstall
 
 #=============================================================================
-# Target rules for target CMakeFiles/Flir.dir
+# Target rules for target CMakeFiles/skypasta.dir
 
 # All Build rule for target.
-CMakeFiles/Flir.dir/all:
-	$(MAKE) -f CMakeFiles/Flir.dir/build.make CMakeFiles/Flir.dir/depend
-	$(MAKE) -f CMakeFiles/Flir.dir/build.make CMakeFiles/Flir.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/jonathanhirsch/Dropbox/UBCUAS/Flir/cmake-build-debug/CMakeFiles --progress-num=1,2,3 "Built target Flir"
-.PHONY : CMakeFiles/Flir.dir/all
+CMakeFiles/skypasta.dir/all:
+	$(MAKE) -f CMakeFiles/skypasta.dir/build.make CMakeFiles/skypasta.dir/depend
+	$(MAKE) -f CMakeFiles/skypasta.dir/build.make CMakeFiles/skypasta.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug/CMakeFiles --progress-num=1,2,3 "Built target skypasta"
+.PHONY : CMakeFiles/skypasta.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/Flir.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/jonathanhirsch/Dropbox/UBCUAS/Flir/cmake-build-debug/CMakeFiles 3
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/Flir.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/jonathanhirsch/Dropbox/UBCUAS/Flir/cmake-build-debug/CMakeFiles 0
-.PHONY : CMakeFiles/Flir.dir/rule
+CMakeFiles/skypasta.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug/CMakeFiles 3
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/skypasta.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug/CMakeFiles 0
+.PHONY : CMakeFiles/skypasta.dir/rule
 
 # Convenience name for target.
-Flir: CMakeFiles/Flir.dir/rule
+skypasta: CMakeFiles/skypasta.dir/rule
 
-.PHONY : Flir
+.PHONY : skypasta
 
 # clean rule for target.
-CMakeFiles/Flir.dir/clean:
-	$(MAKE) -f CMakeFiles/Flir.dir/build.make CMakeFiles/Flir.dir/clean
-.PHONY : CMakeFiles/Flir.dir/clean
+CMakeFiles/skypasta.dir/clean:
+	$(MAKE) -f CMakeFiles/skypasta.dir/build.make CMakeFiles/skypasta.dir/clean
+.PHONY : CMakeFiles/skypasta.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

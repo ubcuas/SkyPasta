@@ -4,8 +4,8 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/FlirCamera.cpp" "/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug/CMakeFiles/Flir.dir/FlirCamera.cpp.o"
-  "/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/main.cpp" "/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug/CMakeFiles/Flir.dir/main.cpp.o"
+  "/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/FlirCamera.cpp" "/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug/CMakeFiles/skypasta.dir/FlirCamera.cpp.o"
+  "/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/main.cpp" "/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug/CMakeFiles/skypasta.dir/main.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "AppleClang")
 

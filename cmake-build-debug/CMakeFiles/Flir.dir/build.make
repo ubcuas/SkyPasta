@@ -43,10 +43,10 @@ RM = /Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/jonathanhirsch/Dropbox/UBCUAS/Flir
+CMAKE_SOURCE_DIR = /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/jonathanhirsch/Dropbox/UBCUAS/Flir/cmake-build-debug
+CMAKE_BINARY_DIR = /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug
 
 # Include any dependencies generated for this target.
 include CMakeFiles/Flir.dir/depend.make
@@ -59,29 +59,29 @@ include CMakeFiles/Flir.dir/flags.make
 
 CMakeFiles/Flir.dir/main.cpp.o: CMakeFiles/Flir.dir/flags.make
 CMakeFiles/Flir.dir/main.cpp.o: ../main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/jonathanhirsch/Dropbox/UBCUAS/Flir/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/Flir.dir/main.cpp.o"
-	/Library/Developer/CommandLineTools/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Flir.dir/main.cpp.o -c /Users/jonathanhirsch/Dropbox/UBCUAS/Flir/main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/Flir.dir/main.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Flir.dir/main.cpp.o -c /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/main.cpp
 
 CMakeFiles/Flir.dir/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Flir.dir/main.cpp.i"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/jonathanhirsch/Dropbox/UBCUAS/Flir/main.cpp > CMakeFiles/Flir.dir/main.cpp.i
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/main.cpp > CMakeFiles/Flir.dir/main.cpp.i
 
 CMakeFiles/Flir.dir/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Flir.dir/main.cpp.s"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/jonathanhirsch/Dropbox/UBCUAS/Flir/main.cpp -o CMakeFiles/Flir.dir/main.cpp.s
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/main.cpp -o CMakeFiles/Flir.dir/main.cpp.s
 
 CMakeFiles/Flir.dir/FlirCamera.cpp.o: CMakeFiles/Flir.dir/flags.make
 CMakeFiles/Flir.dir/FlirCamera.cpp.o: ../FlirCamera.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/jonathanhirsch/Dropbox/UBCUAS/Flir/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/Flir.dir/FlirCamera.cpp.o"
-	/Library/Developer/CommandLineTools/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Flir.dir/FlirCamera.cpp.o -c /Users/jonathanhirsch/Dropbox/UBCUAS/Flir/FlirCamera.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/Flir.dir/FlirCamera.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Flir.dir/FlirCamera.cpp.o -c /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/FlirCamera.cpp
 
 CMakeFiles/Flir.dir/FlirCamera.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Flir.dir/FlirCamera.cpp.i"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/jonathanhirsch/Dropbox/UBCUAS/Flir/FlirCamera.cpp > CMakeFiles/Flir.dir/FlirCamera.cpp.i
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/FlirCamera.cpp > CMakeFiles/Flir.dir/FlirCamera.cpp.i
 
 CMakeFiles/Flir.dir/FlirCamera.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Flir.dir/FlirCamera.cpp.s"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/jonathanhirsch/Dropbox/UBCUAS/Flir/FlirCamera.cpp -o CMakeFiles/Flir.dir/FlirCamera.cpp.s
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/FlirCamera.cpp -o CMakeFiles/Flir.dir/FlirCamera.cpp.s
 
 # Object files for target Flir
 Flir_OBJECTS = \
@@ -96,7 +96,7 @@ Flir: CMakeFiles/Flir.dir/FlirCamera.cpp.o
 Flir: CMakeFiles/Flir.dir/build.make
 Flir: /usr/local/lib/libSpinnaker.dylib
 Flir: CMakeFiles/Flir.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/jonathanhirsch/Dropbox/UBCUAS/Flir/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable Flir"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable Flir"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/Flir.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -109,6 +109,6 @@ CMakeFiles/Flir.dir/clean:
 .PHONY : CMakeFiles/Flir.dir/clean
 
 CMakeFiles/Flir.dir/depend:
-	cd /Users/jonathanhirsch/Dropbox/UBCUAS/Flir/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/jonathanhirsch/Dropbox/UBCUAS/Flir /Users/jonathanhirsch/Dropbox/UBCUAS/Flir /Users/jonathanhirsch/Dropbox/UBCUAS/Flir/cmake-build-debug /Users/jonathanhirsch/Dropbox/UBCUAS/Flir/cmake-build-debug /Users/jonathanhirsch/Dropbox/UBCUAS/Flir/cmake-build-debug/CMakeFiles/Flir.dir/DependInfo.cmake --color=$(COLOR)
+	cd /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug/CMakeFiles/Flir.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/Flir.dir/depend
 

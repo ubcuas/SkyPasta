@@ -6,15 +6,15 @@
 
 #IncludeRegexTransform: 
 
-/Users/jonathanhirsch/Dropbox/UBCUAS/Flir/FlirCamera.cpp
+/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/FlirCamera.cpp
 FlirCamera.h
-/Users/jonathanhirsch/Dropbox/UBCUAS/Flir/FlirCamera.h
+/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/FlirCamera.h
 
-/Users/jonathanhirsch/Dropbox/UBCUAS/Flir/FlirCamera.h
+/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/FlirCamera.h
 iostream
 -
 Spinnaker.h
-/Users/jonathanhirsch/Dropbox/UBCUAS/Flir/Spinnaker.h
+/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/Spinnaker.h
 stdio.h
 -
 sys/socket.h
@@ -23,6 +23,24 @@ arpa/inet.h
 -
 unistd.h
 -
+
+/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/main.cpp
+iostream
+-
+stdio.h
+-
+sys/socket.h
+-
+arpa/inet.h
+-
+unistd.h
+-
+FlirCamera.h
+/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/FlirCamera.h
+SpinGenApi/SpinnakerGenApi.h
+/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/SpinGenApi/SpinnakerGenApi.h
+SpinnakerPlatform.h
+/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/SpinnakerPlatform.h
 
 /usr/local/include/spinnaker/ArrivalEvent.h
 Interface/IArrivalEvent.h

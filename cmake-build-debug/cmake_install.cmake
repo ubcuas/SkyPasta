@@ -1,4 +1,4 @@
-# Install script for directory: /Users/jonathanhirsch/Dropbox/UBCUAS/Flir
+# Install script for directory: /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -40,5 +40,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/Users/jonathanhirsch/Dropbox/UBCUAS/Flir/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

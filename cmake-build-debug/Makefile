@@ -48,10 +48,10 @@ RM = /Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/jonathanhirsch/Dropbox/UBCUAS/Flir
+CMAKE_SOURCE_DIR = /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/jonathanhirsch/Dropbox/UBCUAS/Flir/cmake-build-debug
+CMAKE_BINARY_DIR = /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/jonathanhirsch/Dropbox/UBCUAS/Flir/cmake-build-debug/CMakeFiles /Users/jonathanhirsch/Dropbox/UBCUAS/Flir/cmake-build-debug/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug/CMakeFiles /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/jonathanhirsch/Dropbox/UBCUAS/Flir/cmake-build-debug/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -111,17 +111,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named Flir
+# Target rules for targets named skypasta
 
 # Build rule for target.
-Flir: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 Flir
-.PHONY : Flir
+skypasta: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 skypasta
+.PHONY : skypasta
 
 # fast build rule for target.
-Flir/fast:
-	$(MAKE) -f CMakeFiles/Flir.dir/build.make CMakeFiles/Flir.dir/build
-.PHONY : Flir/fast
+skypasta/fast:
+	$(MAKE) -f CMakeFiles/skypasta.dir/build.make CMakeFiles/skypasta.dir/build
+.PHONY : skypasta/fast
 
 FlirCamera.o: FlirCamera.cpp.o
 
@@ -129,7 +129,7 @@ FlirCamera.o: FlirCamera.cpp.o
 
 # target to build an object file
 FlirCamera.cpp.o:
-	$(MAKE) -f CMakeFiles/Flir.dir/build.make CMakeFiles/Flir.dir/FlirCamera.cpp.o
+	$(MAKE) -f CMakeFiles/skypasta.dir/build.make CMakeFiles/skypasta.dir/FlirCamera.cpp.o
 .PHONY : FlirCamera.cpp.o
 
 FlirCamera.i: FlirCamera.cpp.i
@@ -138,7 +138,7 @@ FlirCamera.i: FlirCamera.cpp.i
 
 # target to preprocess a source file
 FlirCamera.cpp.i:
-	$(MAKE) -f CMakeFiles/Flir.dir/build.make CMakeFiles/Flir.dir/FlirCamera.cpp.i
+	$(MAKE) -f CMakeFiles/skypasta.dir/build.make CMakeFiles/skypasta.dir/FlirCamera.cpp.i
 .PHONY : FlirCamera.cpp.i
 
 FlirCamera.s: FlirCamera.cpp.s
@@ -147,7 +147,7 @@ FlirCamera.s: FlirCamera.cpp.s
 
 # target to generate assembly for a file
 FlirCamera.cpp.s:
-	$(MAKE) -f CMakeFiles/Flir.dir/build.make CMakeFiles/Flir.dir/FlirCamera.cpp.s
+	$(MAKE) -f CMakeFiles/skypasta.dir/build.make CMakeFiles/skypasta.dir/FlirCamera.cpp.s
 .PHONY : FlirCamera.cpp.s
 
 main.o: main.cpp.o
@@ -156,7 +156,7 @@ main.o: main.cpp.o
 
 # target to build an object file
 main.cpp.o:
-	$(MAKE) -f CMakeFiles/Flir.dir/build.make CMakeFiles/Flir.dir/main.cpp.o
+	$(MAKE) -f CMakeFiles/skypasta.dir/build.make CMakeFiles/skypasta.dir/main.cpp.o
 .PHONY : main.cpp.o
 
 main.i: main.cpp.i
@@ -165,7 +165,7 @@ main.i: main.cpp.i
 
 # target to preprocess a source file
 main.cpp.i:
-	$(MAKE) -f CMakeFiles/Flir.dir/build.make CMakeFiles/Flir.dir/main.cpp.i
+	$(MAKE) -f CMakeFiles/skypasta.dir/build.make CMakeFiles/skypasta.dir/main.cpp.i
 .PHONY : main.cpp.i
 
 main.s: main.cpp.s
@@ -174,7 +174,7 @@ main.s: main.cpp.s
 
 # target to generate assembly for a file
 main.cpp.s:
-	$(MAKE) -f CMakeFiles/Flir.dir/build.make CMakeFiles/Flir.dir/main.cpp.s
+	$(MAKE) -f CMakeFiles/skypasta.dir/build.make CMakeFiles/skypasta.dir/main.cpp.s
 .PHONY : main.cpp.s
 
 # Help Target
@@ -185,7 +185,7 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... Flir"
+	@echo "... skypasta"
 	@echo "... FlirCamera.o"
 	@echo "... FlirCamera.i"
 	@echo "... FlirCamera.s"

@@ -3,8 +3,11 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <boost/thread.hpp>
+#include <future>
 
 #include "FlirCamera.h"
+#include "ImageRetriever.h"
 
 #include "SpinGenApi/SpinnakerGenApi.h"
 
@@ -13,13 +16,33 @@
 #define PORT 5000
 
 
+using namespace std;
+
 
 int main() {
 
-    FlirCamera flirCamera;
-    flirCamera.setTrigger(SOFTWARE);
+    try {
+        FlirCamera flirCamera;
+        flirCamera.setTrigger(SOFTWARE);
 
-    cout << "Cameras Connected: " << flirCamera.getNumCameras() << endl;
+        cout << "Cameras Connected: " << flirCamera.getNumCameras() << endl;
+        ImageRetriever ca(flirCamera.getCamera());
+
+        auto myFuture(async(launch::async, &ImageRetriever::startAcquisition, &ca));
+
+        sleep(5);
+        ca.stopAcquisition();
+        myFuture.get();
+        ca.releaseCamera();
+
+        flirCamera.cleanExit();
+    }
+    catch (Exception e){
+        cout << "Error in Main:  ";
+        cout << e.what() << endl;
+    }
+
+
 
 
 //    int sock = 0, valread;
@@ -53,6 +76,6 @@ int main() {
 //    cout << buffer << endl << endl;
 //    cout << "choose trigger: s or h" << endl;
 
-    flirCamera.cleanExit();
+
 }
 

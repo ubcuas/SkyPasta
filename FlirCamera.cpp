@@ -4,7 +4,6 @@
 
 #include "FlirCamera.h"
 
-
 FlirCamera::FlirCamera(){
     system = System::GetInstance();
     initialize();
@@ -12,39 +11,44 @@ FlirCamera::FlirCamera(){
 }
 
 void FlirCamera::initialize(){
+
     cameraList = system -> GetCameras();
     numberOfCameras = cameraList.GetSize();
 
     if (numberOfCameras <= 0){
         cout << "No Cameras Detected" << endl;
+        cleanExit();
+        return;
     }
 
     cameraPtr = cameraList.GetByIndex(0);
+
     cameraPtr -> Init();
-
-    nodeMap = &cameraPtr ->GetNodeMap();
-
-
 
     configureTrigger();
 }
 
 int FlirCamera::cleanExit() {
+    cout << "Attempting clean exit..." << endl;
     try {
-        disableTrigger();
+
         if (cameraPtr != nullptr){
+            disableTrigger();
             cameraPtr->DeInit();
             cameraPtr = nullptr;
         }
+
         cameraList.Clear();
         system -> ReleaseInstance();
+
     }
     catch (Exception& e){
         cout << "Exception in cleanExit: ";
         cout << e.what() << endl;
         return -1;
     }
-        cout << "Exiting Cleanly..." << endl;
+        cout << "Successfully performed a Clean Exit!" << endl;
+        cout << "exit code 11 suggests improper ptr usage. Will not be caught by clean exit" << endl;
     return 0;
 }
 
@@ -65,8 +69,8 @@ int FlirCamera::setTrigger(TriggerType trigger) {
 
 void FlirCamera::configureTrigger(){
 
-
-    CEnumerationPtr ptrTriggerMode = nodeMap -> GetNode("TriggerMode");
+    INodeMap& nodeMap = cameraPtr ->GetNodeMap();
+    CEnumerationPtr ptrTriggerMode = nodeMap.GetNode("TriggerMode");
     disableTrigger();
 
     //
@@ -76,7 +80,7 @@ void FlirCamera::configureTrigger(){
     // The trigger source must be set to hardware or software while trigger
     // mode is off.
     //
-    CEnumerationPtr ptrTriggerSource = nodeMap -> GetNode("TriggerSource");
+    CEnumerationPtr ptrTriggerSource = nodeMap.GetNode("TriggerSource");
     if (!IsAvailable(ptrTriggerSource) || !IsWritable(ptrTriggerSource))
     {
         cout << "Unable to set trigger mode (node retrieval). Aborting..." << endl;
@@ -139,7 +143,9 @@ void FlirCamera::disableTrigger() {
     // The trigger must be disabled in order to configure whether the source
     // is software or hardware.
     //
-    CEnumerationPtr ptrTriggerMode = nodeMap -> GetNode("TriggerMode");
+
+    INodeMap& nodeMap = cameraPtr ->GetNodeMap();
+    CEnumerationPtr ptrTriggerMode = nodeMap.GetNode("TriggerMode");
     if (!IsAvailable(ptrTriggerMode) || !IsReadable(ptrTriggerMode))
     {
         cout << "Unable to disable trigger mode (node retrieval). Aborting..." << endl;
@@ -156,29 +162,5 @@ void FlirCamera::disableTrigger() {
     ptrTriggerMode->SetIntValue(ptrTriggerModeOff->GetValue());
 
     cout << "Trigger mode disabled..." << endl;
-}
-
-void FlirCamera::setRate(int rate){
-    if (acquireNextImage){
-        stopAcquisition();
-    }
-
-    this -> rate = rate;
-}
-
-void FlirCamera::stopAcquisition() {
-    acquireNextImage = false;
-}
-
-void FlirCamera::acquireImages() {
-    acquireNextImage = true;
-    cameraPtr -> BeginAcquisition();
-    while (acquireNextImage){
-
-
-        sleep(rate * 1000);
-    }
-
-    cameraPtr -> EndAcquisition();
 }
 

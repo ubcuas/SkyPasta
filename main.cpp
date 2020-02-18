@@ -17,12 +17,12 @@ static const int RATE = 2; // delay between each image acquisition trigger
 
 bool stopFlag = false;
 
-void acquireImagesFixedRate(int rate, ImageRetriever ca){
-    ca.startAcquisition();
+void acquireImagesFixedRate(int rate, ImageRetriever *ca){
+    ca->startAcquisition();
 
     while (!stopFlag){
         cout << "aquiring........." << endl;
-        auto myFuture(async(launch::async, &ImageRetriever::triggerCameraOnce, &ca));
+        auto myFuture(async(launch::async, &ImageRetriever::triggerCameraOnce, ca));
         if (stopFlag){
             break;
         }
@@ -31,17 +31,17 @@ void acquireImagesFixedRate(int rate, ImageRetriever ca){
         cout << endl;
     }
 
-    ca.stopAcquisition();
+    ca -> stopAcquisition();
 }
 
-void readFromSocket(Telemetry telemetry){
+void readFromSocket(Telemetry *telemetry){
 
-    if (!telemetry.isConnected()){
+    if (!telemetry->isConnected()){
         cout << "Telemetry error: Not connected" << endl;
         return;
     }
-    while (!stopFlag && telemetry.isConnected()){
-        if (telemetry.readData() == -1){
+    while (!stopFlag && telemetry->isConnected()){
+        if (telemetry->readData() == -1){
             return;
         }
         if (stopFlag){
@@ -66,9 +66,9 @@ int main() {
         telemetry.connectServer();
 
 
-        auto myFuture(async(launch::async, acquireImagesFixedRate, RATE, ca));
+        auto myFuture(async(launch::async, acquireImagesFixedRate, RATE, &ca));
 
-        auto myFuture2(async(launch::async, readFromSocket, telemetry));
+        auto myFuture2(async(launch::async, readFromSocket, &telemetry));
 
         sleep(20);
         stopFlag = true;

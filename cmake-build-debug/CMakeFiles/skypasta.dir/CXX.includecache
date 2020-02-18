@@ -6,10 +6,6 @@
 
 #IncludeRegexTransform: 
 
-/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/FlirCamera.cpp
-FlirCamera.h
-/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/FlirCamera.h
-
 /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/FlirCamera.h
 iostream
 -
@@ -23,6 +19,40 @@ arpa/inet.h
 -
 unistd.h
 -
+
+/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/ImageRetriever.h
+FlirCamera.h
+/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/FlirCamera.h
+map
+-
+
+/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/Telemetry.h
+stdio.h
+-
+sys/socket.h
+-
+arpa/inet.h
+-
+iostream
+-
+unistd.h
+-
+
+/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/main.cpp
+iostream
+-
+unistd.h
+-
+future
+-
+FlirCamera.h
+/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/FlirCamera.h
+ImageRetriever.h
+/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/ImageRetriever.h
+SpinGenApi/SpinnakerGenApi.h
+/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/SpinGenApi/SpinnakerGenApi.h
+Telemetry.h
+/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/Telemetry.h
 
 /usr/local/include/spinnaker/ArrivalEvent.h
 Interface/IArrivalEvent.h

@@ -15,35 +15,32 @@ enum TriggerMode{
 class ImageRetriever {
 public:
     ImageRetriever(CameraPtr cameraPtr);
-    void setRate(int rate){this -> rate = rate;};
-    int getRate(){return rate;}
-    bool isRunning(){return running;};
     void startAcquisition();
     int stopAcquisition();
     void releaseCamera(){cameraPtr = nullptr;};
-    void setTriggerMode(TriggerMode triggerMode){this -> currentTriggerMode = triggerMode; configureImageRetriver();};
-    void triggerCamera();
+    void triggerCameraOnce();
+
+    void setTriggerMode(TriggerMode triggerMode);
+    void setContinuousRate(int continousRate){ this -> continousRate = continousRate;};
+    int getContinuousRate(){return continousRate;}
+    bool isRunning(){return running;};
 
 private:
-    int rate = 1;
-    bool running = false;
-    CameraPtr cameraPtr = nullptr;
+    void configureImageRetriever();
     void acquireImagesContinuous(INodeMap& nodeMap);
-    void acquireImagesSingleFrame(INodeMap& nodeMap);
-    bool stopFlag = false;
-    void configureImageRetriver();
-    int serialNum = 12345;
     void triggerImageRetrieval(INodeMap& nodeMap);
-    TriggerMode currentTriggerMode = CONTINUOUS;
     void acquireImage(INodeMap& nodeMap);
 
+
+    CameraPtr cameraPtr = nullptr;
+    TriggerMode currentTriggerMode = CONTINUOUS;
     FILE* file;
-
-
     map<TriggerMode, string> triggerModeMap;
 
-
+    int continousRate = 1;
+    bool running = false;
+    bool stopFlag = false;
 };
 
 
-#endif //SKYPASTA_CONTINUOUSACQUISITION_H
+#endif

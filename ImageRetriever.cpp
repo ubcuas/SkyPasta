@@ -5,18 +5,16 @@
 #include "ImageRetriever.h"
 #include <sys/time.h>
 #include <iomanip>
+#include <sys/stat.h>
 
 
 double totalTime = 0;
 
 struct timeval start, endd;
 int ctr = 0;
-double ema = 0;
-double ma = 0;
 
 bool singleFrameModeEnabled = true;
 
-double smoothingFactor = 2.0 / (20.0 + 1); // moving average over the last 20 images;
 
 
 namespace {
@@ -33,13 +31,6 @@ namespace {
         cout << " sec" << endl;
 
         totalTime += time_taken;
-
-        ma = totalTime / ctr;
-        cout << "current moving average: " << ma << "sec" << endl;
-
-        ema = (time_taken * smoothingFactor) + ma * (1 - smoothingFactor);
-        cout << "EMA: "  << ema << "sec" << endl;
-
     }
 }
 
@@ -54,13 +45,22 @@ ImageRetriever::ImageRetriever(CameraPtr cameraPtr){
         cout << "No Camera devices attached to Image Retriever " << endl;
         return;
     }
+    if (cameraPtr-> IsInitialized() == false){
+        cout << "camera not initialized" << endl;
+        return;
+    }
     else{
-        configureImageRetriver();
+        configureImageRetriever();
     }
 }
 
+void ImageRetriever::setTriggerMode(TriggerMode triggerMode){
+    this -> currentTriggerMode = triggerMode;
+    configureImageRetriever();
+}
 
-void ImageRetriever::triggerCamera() {
+
+void ImageRetriever::triggerCameraOnce() {
     cameraPtr ->BeginAcquisition();
     if (singleFrameModeEnabled == true){
         acquireImage(cameraPtr -> GetNodeMap());
@@ -68,10 +68,10 @@ void ImageRetriever::triggerCamera() {
     cameraPtr ->EndAcquisition();
 }
 
-void ImageRetriever::configureImageRetriver() {
+void ImageRetriever::configureImageRetriever() {
 
-
-    FILE* tempFile = fopen("test.txt", "w+");
+    mkdir("../Images", 0);
+    FILE* tempFile = fopen("../Images/test.txt", "w+");
     if (tempFile == nullptr)
     {
         cout << "Failed to create file in current folder.  Please check "
@@ -82,10 +82,9 @@ void ImageRetriever::configureImageRetriver() {
         return;
     }
     fclose(tempFile);
-    remove("test.txt");
+    remove("../Images/test.txt");
 
     INodeMap &nodeMap = cameraPtr -> GetNodeMap();
-
 
     gcstring selectedMode;
     const char *selectedModeArr = triggerModeMap.at(currentTriggerMode).c_str();
@@ -123,7 +122,6 @@ void ImageRetriever::startAcquisition() {
     if (!running){
         stopFlag = false;
         running = true;
-        ema = 0;
         ctr = 0;
         totalTime = 0;
 
@@ -162,14 +160,9 @@ int ImageRetriever::stopAcquisition() {
     double averageTime = totalTime / ctr;
     cout << "Average time per image: " << averageTime << setprecision(6) << "sec"<< endl;
 
+    cout << endl;
+
     return 0;
-}
-
-
-void ImageRetriever::acquireImagesSingleFrame(INodeMap& nodeMap) {
-
-    acquireImage(nodeMap);
-
 }
 
 void ImageRetriever::acquireImage(INodeMap &nodeMap) {
@@ -192,7 +185,7 @@ void ImageRetriever::acquireImage(INodeMap &nodeMap) {
 
         ImagePtr convertedImage = pResultImage->Convert(PixelFormat_Mono8, HQ_LINEAR);
         ostringstream filename;
-        filename << "Trigger-" << ctr << ".jpg";
+        filename << "../Images/Trigger-" << ctr << ".jpg";
 
         convertedImage->Save(filename.str().c_str());
 
@@ -218,7 +211,7 @@ void ImageRetriever::acquireImagesContinuous(INodeMap& nodeMap) {
         acquireImage(nodeMap);
 
         cout << endl;
-        sleep(rate);
+        sleep(continousRate);
     }
     cameraPtr ->EndAcquisition();
 }

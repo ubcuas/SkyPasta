@@ -27,8 +27,8 @@ void acquireImagesFixedRate(int rate, ImageRetriever ca){
 
     while (!stopFlag){
         cout << "aquiring........." << endl;
-        //ca.triggerCamera();
-        auto myFuture(async(launch::async, &ImageRetriever::triggerCamera, &ca));
+        //ca.triggerCameraOnce();
+        auto myFuture(async(launch::async, &ImageRetriever::triggerCameraOnce, &ca));
         if (stopFlag){
             break;
         }
@@ -52,7 +52,6 @@ int main() {
         ImageRetriever ca(flirCamera.getCamera());
         ca.setTriggerMode(SINGLE_FRAME);
 
-        //auto myFuture(async(launch::async, &ImageRetriever::startAcquisition, &ca));
 
         auto myFuture(async(launch::async, acquireImagesFixedRate, RATE, ca));
 

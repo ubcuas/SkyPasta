@@ -34,7 +34,6 @@ private:
 
     CameraPtr cameraPtr = nullptr;
     TriggerMode currentTriggerMode = CONTINUOUS;
-    FILE* file;
     map<TriggerMode, string> triggerModeMap;
 
     int continousRate = 1;

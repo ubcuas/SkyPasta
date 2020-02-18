@@ -144,6 +144,12 @@
 		<Unit filename="/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/ImageRetriever.h">
 			<Option target="skypasta"/>
 		</Unit>
+		<Unit filename="/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/Telemetry.cpp">
+			<Option target="skypasta"/>
+		</Unit>
+		<Unit filename="/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/Telemetry.h">
+			<Option target="skypasta"/>
+		</Unit>
 		<Unit filename="/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/main.cpp">
 			<Option target="BoostTest"/>
 			<Option target="skypasta"/>

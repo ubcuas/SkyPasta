@@ -77,9 +77,6 @@ void ImageRetriever::configureImageRetriever() {
         cout << "Failed to create file in current folder.  Please check "
                 "permissions."
              << endl;
-        cout << "Press Enter to exit..." << endl;
-        getchar();
-        return;
     }
     fclose(tempFile);
     remove("../Images/test.txt");

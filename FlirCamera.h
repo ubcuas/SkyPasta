@@ -19,7 +19,6 @@ using namespace Spinnaker::GenApi;
 using namespace Spinnaker::GenICam;
 
 using namespace::std;
-//using namespace::boost;
 
 enum TriggerType
 {

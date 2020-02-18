@@ -1,6 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/skypasta.dir/FlirCamera.cpp.o"
   "CMakeFiles/skypasta.dir/ImageRetriever.cpp.o"
+  "CMakeFiles/skypasta.dir/Telemetry.cpp.o"
   "CMakeFiles/skypasta.dir/main.cpp.o"
   "skypasta"
   "skypasta.pdb"

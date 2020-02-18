@@ -20,11 +20,13 @@ class Telemetry {
 public:
     Telemetry(const string address, const int port);
     void connectServer();
-    void readData();
-    //void waitForData();
+    int readData();
+
+    bool isConnected(){return this -> connected;};
 
 private:
     string address = "";
+    bool connected = false;
     const char* addressChar;
     int port = 0;
     int sock = 0;

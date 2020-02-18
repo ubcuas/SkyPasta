@@ -8,6 +8,7 @@
 
 
 #define PORT 5000
+#define ADDRESS "127.0.0.1"
 
 
 using namespace std;
@@ -35,8 +36,14 @@ void acquireImagesFixedRate(int rate, ImageRetriever ca){
 
 void readFromSocket(Telemetry telemetry){
 
-    while (!stopFlag){
-        telemetry.readData();
+    if (!telemetry.isConnected()){
+        cout << "Telemetry error: Not connected" << endl;
+        return;
+    }
+    while (!stopFlag && telemetry.isConnected()){
+        if (telemetry.readData() == -1){
+            return;
+        }
         if (stopFlag){
             break;
         }
@@ -55,7 +62,7 @@ int main() {
         ImageRetriever ca(flirCamera.getCamera());
         ca.setTriggerMode(SINGLE_FRAME);
 
-        Telemetry telemetry("127.0.0.1",5000);
+        Telemetry telemetry(ADDRESS,PORT);
         telemetry.connectServer();
 
 

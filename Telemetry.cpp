@@ -9,7 +9,7 @@ Telemetry::Telemetry(const string address, const int port){
     this -> port = port;
 }
 
-void Telemetry::connectServer() {
+void Telemetry::connectServer(){
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
         printf("\n Socket creation error \n");
@@ -31,11 +31,18 @@ void Telemetry::connectServer() {
         printf("\nConnection Failed \n");
         return;
     }
-
-
+    connected = true;
 }
 
-void Telemetry::readData(){
-    valread = read( sock , buffer, 1024);
-    cout << buffer << endl << endl;
+int Telemetry::readData(){
+
+    if (connected) {
+        valread = read(sock, buffer, 1024);
+        cout << buffer << endl << endl;
+    } else {
+        cout << "Telemetry Error: Not connected" << endl;
+        return -1;
+    }
+
+    return 0;
 }

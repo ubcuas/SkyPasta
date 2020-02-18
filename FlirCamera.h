@@ -35,10 +35,11 @@ public:
     void configureTrigger();
     int cleanExit();
 
-    int setTrigger(TriggerType trigger);
-    int getNumCameras();
+    int setTrigger(const TriggerType trigger);
+    int& getNumCameras();
+    CameraPtr& getCamera() {return this-> cameraPtr;}
     TriggerType getTriggerType();
-    CameraPtr getCamera(){return this-> cameraPtr;}
+
 private:
     void disableTrigger();
 

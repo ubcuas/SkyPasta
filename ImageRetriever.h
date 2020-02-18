@@ -14,16 +14,16 @@ enum TriggerMode{
 
 class ImageRetriever {
 public:
-    ImageRetriever(CameraPtr cameraPtr);
+    ImageRetriever(const CameraPtr cameraPtr);
     void startAcquisition();
     int stopAcquisition();
     void releaseCamera(){cameraPtr = nullptr;};
     void triggerCameraOnce();
 
-    void setTriggerMode(TriggerMode triggerMode);
-    void setContinuousRate(int continousRate){ this -> continousRate = continousRate;};
-    int getContinuousRate(){return continousRate;}
-    bool isRunning(){return running;};
+    void setTriggerMode(const TriggerMode triggerMode);
+    void setContinuousRate(const int continousRate){ this -> continousRate = continousRate;};
+    int getContinuousRate()const {return continousRate;}
+    bool isRunning()const {return running;};
 
 private:
     void configureImageRetriever();

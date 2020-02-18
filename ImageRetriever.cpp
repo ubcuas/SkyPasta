@@ -34,7 +34,7 @@ namespace {
     }
 }
 
-ImageRetriever::ImageRetriever(CameraPtr cameraPtr){
+ImageRetriever::ImageRetriever(const CameraPtr cameraPtr){
     this -> cameraPtr = cameraPtr;
 
     triggerModeMap[CONTINUOUS] = "Continuous";

@@ -22,10 +22,9 @@ public:
     void connectServer();
     int readData();
 
-    bool isConnected(){return this -> connected;};
+    bool isConnected()const {return this -> connected;};
 
 private:
-    string address = "";
     bool connected = false;
     const char* addressChar;
     int port = 0;

@@ -56,7 +56,7 @@ TriggerType FlirCamera::getTriggerType() {
     return currentTrigger;
 }
 
-int FlirCamera::getNumCameras() {
+int& FlirCamera::getNumCameras() {
     return numberOfCameras;
 }
 

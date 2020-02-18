@@ -4,7 +4,6 @@
 
 #include "Telemetry.h"
 Telemetry::Telemetry(const string address, const int port){
-    this -> address = address;
     addressChar = address.c_str();
     this -> port = port;
 }

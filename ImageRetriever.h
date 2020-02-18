@@ -2,9 +2,11 @@
 // Created by Jonathan Hirsch on 2/17/20.
 //
 #include "FlirCamera.h"
+#include "ImageTag.h"
 #include <map>
-#ifndef SKYPASTA_CONTINUOUSACQUISITION_H
-#define SKYPASTA_CONTINUOUSACQUISITION_H
+
+#ifndef SKYPASTA_IMAGERETRIEVER_H
+#define SKYPASTA_IMAGERETRIEVER_H
 
 enum TriggerMode{
     CONTINUOUS,
@@ -14,7 +16,7 @@ enum TriggerMode{
 
 class ImageRetriever {
 public:
-    ImageRetriever(const CameraPtr cameraPtr);
+    ImageRetriever(const CameraPtr cameraPtr, ImageTag *imageTag);
     void startAcquisition();
     int stopAcquisition();
     void releaseCamera(){cameraPtr = nullptr;};
@@ -33,6 +35,7 @@ private:
 
 
     CameraPtr cameraPtr = nullptr;
+    ImageTag *imageTag;
     TriggerMode currentTriggerMode = CONTINUOUS;
     map<TriggerMode, string> triggerModeMap;
 
@@ -42,4 +45,4 @@ private:
 };
 
 
-#endif
+#endif // IMAGERETRIEVER_H

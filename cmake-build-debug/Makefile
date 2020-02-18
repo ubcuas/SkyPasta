@@ -190,6 +190,33 @@ ImageRetriever.cpp.s:
 	$(MAKE) -f CMakeFiles/skypasta.dir/build.make CMakeFiles/skypasta.dir/ImageRetriever.cpp.s
 .PHONY : ImageRetriever.cpp.s
 
+ImageTag.o: ImageTag.cpp.o
+
+.PHONY : ImageTag.o
+
+# target to build an object file
+ImageTag.cpp.o:
+	$(MAKE) -f CMakeFiles/skypasta.dir/build.make CMakeFiles/skypasta.dir/ImageTag.cpp.o
+.PHONY : ImageTag.cpp.o
+
+ImageTag.i: ImageTag.cpp.i
+
+.PHONY : ImageTag.i
+
+# target to preprocess a source file
+ImageTag.cpp.i:
+	$(MAKE) -f CMakeFiles/skypasta.dir/build.make CMakeFiles/skypasta.dir/ImageTag.cpp.i
+.PHONY : ImageTag.cpp.i
+
+ImageTag.s: ImageTag.cpp.s
+
+.PHONY : ImageTag.s
+
+# target to generate assembly for a file
+ImageTag.cpp.s:
+	$(MAKE) -f CMakeFiles/skypasta.dir/build.make CMakeFiles/skypasta.dir/ImageTag.cpp.s
+.PHONY : ImageTag.cpp.s
+
 Telemetry.o: Telemetry.cpp.o
 
 .PHONY : Telemetry.o
@@ -263,6 +290,9 @@ help:
 	@echo "... ImageRetriever.o"
 	@echo "... ImageRetriever.i"
 	@echo "... ImageRetriever.s"
+	@echo "... ImageTag.o"
+	@echo "... ImageTag.i"
+	@echo "... ImageTag.s"
 	@echo "... Telemetry.o"
 	@echo "... Telemetry.i"
 	@echo "... Telemetry.s"

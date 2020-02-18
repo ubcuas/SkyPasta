@@ -6,6 +6,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_CHECK_CXX
   "/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/FlirCamera.cpp" "/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug/CMakeFiles/skypasta.dir/FlirCamera.cpp.o"
   "/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/ImageRetriever.cpp" "/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug/CMakeFiles/skypasta.dir/ImageRetriever.cpp.o"
+  "/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/ImageTag.cpp" "/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug/CMakeFiles/skypasta.dir/ImageTag.cpp.o"
   "/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/Telemetry.cpp" "/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug/CMakeFiles/skypasta.dir/Telemetry.cpp.o"
   "/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/main.cpp" "/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug/CMakeFiles/skypasta.dir/main.cpp.o"
   )

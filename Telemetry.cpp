@@ -3,9 +3,10 @@
 //
 
 #include "Telemetry.h"
-Telemetry::Telemetry(const string address, const int port){
+Telemetry::Telemetry(const string address, const int port, ImageTag *imageTag){
     addressChar = address.c_str();
     this -> port = port;
+    this -> imageTag = imageTag;
 }
 
 void Telemetry::connectServer(){
@@ -38,6 +39,8 @@ int Telemetry::readData(){
     if (connected) {
         valread = read(sock, buffer, 1024);
         cout << buffer << endl << endl;
+        imageTag->addTelemetry(buffer);
+
     } else {
         cout << "Telemetry Error: Not connected" << endl;
         return -1;

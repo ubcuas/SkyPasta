@@ -11,20 +11,40 @@ iostream
 -
 Spinnaker.h
 /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/Spinnaker.h
-stdio.h
+
+/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/ImageRetriever.cpp
+ImageRetriever.h
+/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/ImageRetriever.h
+sys/time.h
 -
-sys/socket.h
+iomanip
 -
-arpa/inet.h
+sys/stat.h
 -
-unistd.h
+chrono
 -
 
 /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/ImageRetriever.h
 FlirCamera.h
 /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/FlirCamera.h
+ImageTag.h
+/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/ImageTag.h
 map
 -
+
+/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/ImageTag.cpp
+ImageTag.h
+/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/ImageTag.h
+
+/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/ImageTag.h
+Spinnaker.h
+/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/Spinnaker.h
+queue
+-
+
+/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/Telemetry.cpp
+Telemetry.h
+/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/Telemetry.h
 
 /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/Telemetry.h
 stdio.h
@@ -37,6 +57,8 @@ iostream
 -
 unistd.h
 -
+ImageTag.h
+/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/ImageTag.h
 
 /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/main.cpp
 iostream
@@ -53,6 +75,8 @@ SpinGenApi/SpinnakerGenApi.h
 /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/SpinGenApi/SpinnakerGenApi.h
 Telemetry.h
 /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/Telemetry.h
+ImageTag.h
+/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/ImageTag.h
 
 /usr/local/include/spinnaker/ArrivalEvent.h
 Interface/IArrivalEvent.h

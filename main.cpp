@@ -5,6 +5,7 @@
 #include "ImageRetriever.h"
 #include "SpinGenApi/SpinnakerGenApi.h"
 #include "Telemetry.h"
+#include "ImageTag.h"
 
 
 #define PORT 5000
@@ -58,11 +59,13 @@ int main() {
         FlirCamera flirCamera;
         flirCamera.setTrigger(SOFTWARE);
 
+        ImageTag imageTag;
+
         cout << "Cameras Connected: " << flirCamera.getNumCameras() << endl;
-        ImageRetriever ca(flirCamera.getCamera());
+        ImageRetriever ca(flirCamera.getCamera(), &imageTag);
         ca.setTriggerMode(SINGLE_FRAME);
 
-        Telemetry telemetry(ADDRESS,PORT);
+        Telemetry telemetry(ADDRESS,PORT, &imageTag);
         telemetry.connectServer();
 
 

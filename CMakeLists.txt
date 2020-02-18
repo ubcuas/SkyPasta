@@ -3,7 +3,7 @@ project(skypasta)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(skypasta main.cpp FlirCamera.cpp FlirCamera.h ImageRetriever.cpp ImageRetriever.h Telemetry.cpp Telemetry.h Telemetry.cpp Telemetry.h)
+add_executable(skypasta main.cpp FlirCamera.cpp FlirCamera.h ImageRetriever.cpp ImageRetriever.h Telemetry.cpp Telemetry.h Telemetry.cpp Telemetry.h ImageTag.cpp ImageTag.h)
 include_directories(/usr/local/include/spinnaker/)
 target_link_libraries(skypasta PUBLIC /usr/local/lib/libSpinnaker.dylib)
 

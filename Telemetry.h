@@ -8,6 +8,7 @@
 #include <arpa/inet.h>
 #include <iostream>
 #include <unistd.h>
+#include "ImageTag.h"
 
 
 #ifndef SKYPASTA_TELEMETRY_H
@@ -18,7 +19,7 @@
 using namespace std;
 class Telemetry {
 public:
-    Telemetry(const string address, const int port);
+    Telemetry(const string address, const int port, ImageTag *imageTag);
     void connectServer();
     int readData();
 
@@ -32,6 +33,7 @@ private:
     int valread = 0;
     char buffer[1024] = {0};
     struct sockaddr_in serv_addr;
+    ImageTag *imageTag;
 
 };
 

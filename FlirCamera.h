@@ -2,15 +2,11 @@
 // Created by Jonathan Hirsch on 2/15/20.
 //
 
-#ifndef FLIR_FLIRCAMERA_H
-#define FLIR_FLIRCAMERA_H
+#ifndef SKYPASTA_FLIRCAMERA_H
+#define SKYPASTA_FLIRCAMERA_H
 
 #include <iostream>
 #include "Spinnaker.h"
-#include <stdio.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <unistd.h>
 
 #pragma once
 
@@ -51,4 +47,4 @@ private:
 
 
 };
-#endif //FLIR_FLIRCAMERA_H
+#endif //SKYPASTA_FLIRCAMERA_H

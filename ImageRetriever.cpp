@@ -6,6 +6,7 @@
 #include <sys/time.h>
 #include <iomanip>
 #include <sys/stat.h>
+#include <chrono>
 
 
 double totalTime = 0;
@@ -34,8 +35,9 @@ namespace {
     }
 }
 
-ImageRetriever::ImageRetriever(const CameraPtr cameraPtr){
+ImageRetriever::ImageRetriever(const CameraPtr cameraPtr, ImageTag *imageTag){
     this -> cameraPtr = cameraPtr;
+    this -> imageTag = imageTag;
 
     triggerModeMap[CONTINUOUS] = "Continuous";
     triggerModeMap[SINGLE_FRAME] = "SingleFrame";
@@ -54,7 +56,7 @@ ImageRetriever::ImageRetriever(const CameraPtr cameraPtr){
     }
 }
 
-void ImageRetriever::setTriggerMode(TriggerMode triggerMode){
+void ImageRetriever::setTriggerMode(const TriggerMode triggerMode){
     this -> currentTriggerMode = triggerMode;
     configureImageRetriever();
 }
@@ -165,9 +167,9 @@ int ImageRetriever::stopAcquisition() {
 void ImageRetriever::acquireImage(INodeMap &nodeMap) {
 
     gettimeofday(&start, NULL);
-    ctr ++;
+    long ms = start.tv_sec * 1000 + start.tv_usec / 1000;
     triggerImageRetrieval(nodeMap);
-
+    ctr ++;
     ImagePtr pResultImage = cameraPtr ->GetNextImage();
     cout << "_____________________________" << endl;
     cout << ":: Acquisition# " << ctr << endl;
@@ -189,6 +191,7 @@ void ImageRetriever::acquireImage(INodeMap &nodeMap) {
         cout << "Image saved at " << filename.str() << endl;
     }
 
+    imageTag->addImage(pResultImage, ms);
     pResultImage->Release();
 
     gettimeofday(&endd, NULL);

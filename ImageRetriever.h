@@ -21,6 +21,11 @@ private:
     CameraPtr cameraPtr = nullptr;
     void acquireImages();
     bool stopFlag = false;
+    void configureImageRetriver();
+    int serialNum = 12345;
+    void triggerImageRetrieval(INodeMap& nodeMap);
+
+    FILE* file;
 };
 
 

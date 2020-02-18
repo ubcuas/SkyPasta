@@ -19,19 +19,18 @@ bool singleFrameModeEnabled = true;
 
 
 namespace {
-    void calculateTimeTaken(timeval &startTime, timeval &endTime){
+    double calculateTimeTaken(timeval &startTime, timeval &endTime){
 
         double time_taken;
 
         time_taken = (endd.tv_sec - start.tv_sec) * 1e6;
-        time_taken = (time_taken + (endd.tv_usec -
-                                    start.tv_usec)) * 1e-6;
+        time_taken = (time_taken + (endd.tv_usec - start.tv_usec)) * 1e-6;
 
-        cout << "Time taken by program is : " << fixed
-             << time_taken << setprecision(6);
+        cout << "Time taken by program is : " << fixed << time_taken << setprecision(6);
         cout << " sec" << endl;
 
         totalTime += time_taken;
+        return time_taken;
     }
 }
 
@@ -191,12 +190,14 @@ void ImageRetriever::acquireImage(INodeMap &nodeMap) {
         cout << "Image saved at " << filename.str() << endl;
     }
 
-    imageTag->addImage(pResultImage, ms);
+
     pResultImage->Release();
 
     gettimeofday(&endd, NULL);
 
-    calculateTimeTaken(start, endd);
+    double timeTaken = calculateTimeTaken(start, endd);
+
+    imageTag->addImage(pResultImage, ms, timeTaken);
 }
 
 void ImageRetriever::acquireImagesContinuous(INodeMap& nodeMap) {

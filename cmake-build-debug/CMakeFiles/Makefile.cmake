@@ -23,9 +23,6 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.15/Modules/Compiler/CMakeCommonCompilerMacros.cmake"
   "/Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.15/Modules/Compiler/Clang.cmake"
   "/Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.15/Modules/Compiler/GNU.cmake"
-  "/Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.15/Modules/FindBoost.cmake"
-  "/Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.15/Modules/FindPackageHandleStandardArgs.cmake"
-  "/Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.15/Modules/FindPackageMessage.cmake"
   "/Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.15/Modules/Internal/CMakeCheckCompilerFlag.cmake"
   "/Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.15/Modules/Platform/Apple-AppleClang-C.cmake"
   "/Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.15/Modules/Platform/Apple-AppleClang-CXX.cmake"
@@ -40,23 +37,6 @@ set(CMAKE_MAKEFILE_DEPENDS
   "CMakeFiles/3.15.3/CMakeCCompiler.cmake"
   "CMakeFiles/3.15.3/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.15.3/CMakeSystem.cmake"
-  "/usr/local/lib/cmake/Boost-1.72.0/BoostConfig.cmake"
-  "/usr/local/lib/cmake/Boost-1.72.0/BoostConfigVersion.cmake"
-  "/usr/local/lib/cmake/BoostDetectToolset-1.72.0.cmake"
-  "/usr/local/lib/cmake/boost_filesystem-1.72.0/boost_filesystem-config-version.cmake"
-  "/usr/local/lib/cmake/boost_filesystem-1.72.0/boost_filesystem-config.cmake"
-  "/usr/local/lib/cmake/boost_filesystem-1.72.0/libboost_filesystem-variant-mt-shared.cmake"
-  "/usr/local/lib/cmake/boost_filesystem-1.72.0/libboost_filesystem-variant-mt-static.cmake"
-  "/usr/local/lib/cmake/boost_filesystem-1.72.0/libboost_filesystem-variant-shared.cmake"
-  "/usr/local/lib/cmake/boost_filesystem-1.72.0/libboost_filesystem-variant-static.cmake"
-  "/usr/local/lib/cmake/boost_headers-1.72.0/boost_headers-config-version.cmake"
-  "/usr/local/lib/cmake/boost_headers-1.72.0/boost_headers-config.cmake"
-  "/usr/local/lib/cmake/boost_system-1.72.0/boost_system-config-version.cmake"
-  "/usr/local/lib/cmake/boost_system-1.72.0/boost_system-config.cmake"
-  "/usr/local/lib/cmake/boost_system-1.72.0/libboost_system-variant-mt-shared.cmake"
-  "/usr/local/lib/cmake/boost_system-1.72.0/libboost_system-variant-mt-static.cmake"
-  "/usr/local/lib/cmake/boost_system-1.72.0/libboost_system-variant-shared.cmake"
-  "/usr/local/lib/cmake/boost_system-1.72.0/libboost_system-variant-static.cmake"
   )
 
 # The corresponding makefile is:
@@ -72,6 +52,5 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/BoostTest.dir/DependInfo.cmake"
   "CMakeFiles/skypasta.dir/DependInfo.cmake"
   )

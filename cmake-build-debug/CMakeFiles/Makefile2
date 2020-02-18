@@ -53,13 +53,11 @@ CMAKE_BINARY_DIR = /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-deb
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/BoostTest.dir/all
 all: CMakeFiles/skypasta.dir/all
 
 .PHONY : all
 
 # The main recursive "clean" target.
-clean: CMakeFiles/BoostTest.dir/clean
 clean: CMakeFiles/skypasta.dir/clean
 
 .PHONY : clean
@@ -70,40 +68,13 @@ preinstall:
 .PHONY : preinstall
 
 #=============================================================================
-# Target rules for target CMakeFiles/BoostTest.dir
-
-# All Build rule for target.
-CMakeFiles/BoostTest.dir/all:
-	$(MAKE) -f CMakeFiles/BoostTest.dir/build.make CMakeFiles/BoostTest.dir/depend
-	$(MAKE) -f CMakeFiles/BoostTest.dir/build.make CMakeFiles/BoostTest.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug/CMakeFiles --progress-num=1,2 "Built target BoostTest"
-.PHONY : CMakeFiles/BoostTest.dir/all
-
-# Build rule for subdir invocation for target.
-CMakeFiles/BoostTest.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug/CMakeFiles 2
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/BoostTest.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug/CMakeFiles 0
-.PHONY : CMakeFiles/BoostTest.dir/rule
-
-# Convenience name for target.
-BoostTest: CMakeFiles/BoostTest.dir/rule
-
-.PHONY : BoostTest
-
-# clean rule for target.
-CMakeFiles/BoostTest.dir/clean:
-	$(MAKE) -f CMakeFiles/BoostTest.dir/build.make CMakeFiles/BoostTest.dir/clean
-.PHONY : CMakeFiles/BoostTest.dir/clean
-
-#=============================================================================
 # Target rules for target CMakeFiles/skypasta.dir
 
 # All Build rule for target.
 CMakeFiles/skypasta.dir/all:
 	$(MAKE) -f CMakeFiles/skypasta.dir/build.make CMakeFiles/skypasta.dir/depend
 	$(MAKE) -f CMakeFiles/skypasta.dir/build.make CMakeFiles/skypasta.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug/CMakeFiles --progress-num=3,4,5,6,7,8 "Built target skypasta"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug/CMakeFiles --progress-num=1,2,3,4,5,6 "Built target skypasta"
 .PHONY : CMakeFiles/skypasta.dir/all
 
 # Build rule for subdir invocation for target.

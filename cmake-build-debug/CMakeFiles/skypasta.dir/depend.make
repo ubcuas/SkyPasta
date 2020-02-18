@@ -130,6 +130,7 @@ CMakeFiles/skypasta.dir/ImageRetriever.cpp.o: ../FlirCamera.h
 CMakeFiles/skypasta.dir/ImageRetriever.cpp.o: ../ImageRetriever.cpp
 CMakeFiles/skypasta.dir/ImageRetriever.cpp.o: ../ImageRetriever.h
 CMakeFiles/skypasta.dir/ImageRetriever.cpp.o: ../ImageTag.h
+CMakeFiles/skypasta.dir/ImageRetriever.cpp.o: ../lib/json.hpp
 CMakeFiles/skypasta.dir/ImageRetriever.cpp.o: /usr/local/include/spinnaker/ArrivalEvent.h
 CMakeFiles/skypasta.dir/ImageRetriever.cpp.o: /usr/local/include/spinnaker/BasePtr.h
 CMakeFiles/skypasta.dir/ImageRetriever.cpp.o: /usr/local/include/spinnaker/Camera.h
@@ -255,6 +256,7 @@ CMakeFiles/skypasta.dir/ImageRetriever.cpp.o: /usr/local/include/spinnaker/Trans
 
 CMakeFiles/skypasta.dir/ImageTag.cpp.o: ../ImageTag.cpp
 CMakeFiles/skypasta.dir/ImageTag.cpp.o: ../ImageTag.h
+CMakeFiles/skypasta.dir/ImageTag.cpp.o: ../lib/json.hpp
 CMakeFiles/skypasta.dir/ImageTag.cpp.o: /usr/local/include/spinnaker/ArrivalEvent.h
 CMakeFiles/skypasta.dir/ImageTag.cpp.o: /usr/local/include/spinnaker/BasePtr.h
 CMakeFiles/skypasta.dir/ImageTag.cpp.o: /usr/local/include/spinnaker/Camera.h
@@ -381,6 +383,7 @@ CMakeFiles/skypasta.dir/ImageTag.cpp.o: /usr/local/include/spinnaker/TransportLa
 CMakeFiles/skypasta.dir/Telemetry.cpp.o: ../ImageTag.h
 CMakeFiles/skypasta.dir/Telemetry.cpp.o: ../Telemetry.cpp
 CMakeFiles/skypasta.dir/Telemetry.cpp.o: ../Telemetry.h
+CMakeFiles/skypasta.dir/Telemetry.cpp.o: ../lib/json.hpp
 CMakeFiles/skypasta.dir/Telemetry.cpp.o: /usr/local/include/spinnaker/ArrivalEvent.h
 CMakeFiles/skypasta.dir/Telemetry.cpp.o: /usr/local/include/spinnaker/BasePtr.h
 CMakeFiles/skypasta.dir/Telemetry.cpp.o: /usr/local/include/spinnaker/Camera.h
@@ -508,6 +511,7 @@ CMakeFiles/skypasta.dir/main.cpp.o: ../FlirCamera.h
 CMakeFiles/skypasta.dir/main.cpp.o: ../ImageRetriever.h
 CMakeFiles/skypasta.dir/main.cpp.o: ../ImageTag.h
 CMakeFiles/skypasta.dir/main.cpp.o: ../Telemetry.h
+CMakeFiles/skypasta.dir/main.cpp.o: ../lib/json.hpp
 CMakeFiles/skypasta.dir/main.cpp.o: ../main.cpp
 CMakeFiles/skypasta.dir/main.cpp.o: /usr/local/include/spinnaker/ArrivalEvent.h
 CMakeFiles/skypasta.dir/main.cpp.o: /usr/local/include/spinnaker/BasePtr.h

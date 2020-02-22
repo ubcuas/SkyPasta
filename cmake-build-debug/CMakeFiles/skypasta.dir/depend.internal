@@ -132,6 +132,7 @@ CMakeFiles/skypasta.dir/ImageRetriever.cpp.o
  /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/ImageRetriever.h
  /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/ImageTag.h
  /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/lib/json.hpp
+ /usr/local/include/exiv2/exiv2.hpp
  /usr/local/include/spinnaker/ArrivalEvent.h
  /usr/local/include/spinnaker/BasePtr.h
  /usr/local/include/spinnaker/Camera.h
@@ -258,6 +259,7 @@ CMakeFiles/skypasta.dir/ImageTag.cpp.o
  /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/ImageTag.cpp
  /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/ImageTag.h
  /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/lib/json.hpp
+ /usr/local/include/exiv2/exiv2.hpp
  /usr/local/include/spinnaker/ArrivalEvent.h
  /usr/local/include/spinnaker/BasePtr.h
  /usr/local/include/spinnaker/Camera.h
@@ -385,6 +387,7 @@ CMakeFiles/skypasta.dir/Telemetry.cpp.o
  /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/Telemetry.cpp
  /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/Telemetry.h
  /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/lib/json.hpp
+ /usr/local/include/exiv2/exiv2.hpp
  /usr/local/include/spinnaker/ArrivalEvent.h
  /usr/local/include/spinnaker/BasePtr.h
  /usr/local/include/spinnaker/Camera.h
@@ -514,6 +517,7 @@ CMakeFiles/skypasta.dir/main.cpp.o
  /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/Telemetry.h
  /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/lib/json.hpp
  /Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/main.cpp
+ /usr/local/include/exiv2/exiv2.hpp
  /usr/local/include/spinnaker/ArrivalEvent.h
  /usr/local/include/spinnaker/BasePtr.h
  /usr/local/include/spinnaker/Camera.h

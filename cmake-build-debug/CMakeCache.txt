@@ -240,6 +240,12 @@ boost_headers_DIR:PATH=/usr/local/lib/cmake/boost_headers-1.72.0
 //The directory containing a CMake configuration file for boost_system.
 boost_system_DIR:PATH=/usr/local/lib/cmake/boost_system-1.72.0
 
+//The directory containing a CMake configuration file for exiv2.
+exiv2_DIR:PATH=exiv2_DIR-NOTFOUND
+
+//The directory containing a CMake configuration file for exiv.
+exiv_DIR:PATH=exiv_DIR-NOTFOUND
+
 //Value Computed by CMake
 skypasta_BINARY_DIR:STATIC=/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug
 

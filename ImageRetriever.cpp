@@ -172,6 +172,10 @@ void ImageRetriever::acquireImage(INodeMap &nodeMap) {
     ImagePtr pResultImage = cameraPtr ->GetNextImage();
     cout << "_____________________________" << endl;
     cout << ":: Acquisition# " << ctr << endl;
+    string filenameStr = "";
+
+
+
     if (pResultImage->IsIncomplete())
     {
         cout << "Image incomplete with image status " << pResultImage->GetImageStatus() << "..." << endl
@@ -187,7 +191,9 @@ void ImageRetriever::acquireImage(INodeMap &nodeMap) {
 
         convertedImage->Save(filename.str().c_str());
 
-        cout << "Image saved at " << filename.str() << endl;
+        filenameStr = filename.str();
+
+        cout << "Image saved at " << filenameStr << endl;
     }
 
 
@@ -197,7 +203,7 @@ void ImageRetriever::acquireImage(INodeMap &nodeMap) {
 
     double timeTaken = calculateTimeTaken(start, endd);
 
-    imageTag->addImage(pResultImage, ms, timeTaken);
+    imageTag->addImage(filenameStr, ms, timeTaken);
 }
 
 void ImageRetriever::acquireImagesContinuous(INodeMap& nodeMap) {

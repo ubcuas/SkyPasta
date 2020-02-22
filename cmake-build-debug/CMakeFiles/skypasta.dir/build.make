@@ -140,6 +140,7 @@ skypasta: CMakeFiles/skypasta.dir/Telemetry.cpp.o
 skypasta: CMakeFiles/skypasta.dir/ImageTag.cpp.o
 skypasta: CMakeFiles/skypasta.dir/build.make
 skypasta: /usr/local/lib/libSpinnaker.dylib
+skypasta: /usr/local/lib/libexiv2.26.dylib
 skypasta: CMakeFiles/skypasta.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/jonathanhirsch/Dropbox/UBCUAS/skypasta/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable skypasta"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/skypasta.dir/link.txt --verbose=$(VERBOSE)

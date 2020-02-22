@@ -45,6 +45,7 @@
 				<Option compiler="gcc"/>
 				<Compiler>
 					<Add directory="/usr/local/include/spinnaker"/>
+					<Add directory="/usr/local/include/exiv2"/>
 					<Add directory="/Library/Developer/CommandLineTools/usr/bin/../include/c++/v1"/>
 					<Add directory="/usr/local/include"/>
 					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/11.0.0/include"/>
@@ -67,6 +68,7 @@
 				<Option compiler="gcc"/>
 				<Compiler>
 					<Add directory="/usr/local/include/spinnaker"/>
+					<Add directory="/usr/local/include/exiv2"/>
 					<Add directory="/Library/Developer/CommandLineTools/usr/bin/../include/c++/v1"/>
 					<Add directory="/usr/local/include"/>
 					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/11.0.0/include"/>

@@ -3,13 +3,12 @@
 //
 
 #include "ImageTag.h"
-//#include <json/reader.h>
 
-//using namespace json;
-void ImageTag::addImage(const ImagePtr image, const long timestamp, const double timeTaken) {
+void ImageTag::addImage(const string image, const long timestamp, const double timeTaken) {
 
     imageQueue.push({image, timestamp, timeTaken});
     cout << "Adding image:" << timestamp << endl;
+
 }
 
 void ImageTag::addTelemetry(const char *telemetryData) {
@@ -27,6 +26,12 @@ void ImageTag::addTelemetry(const char *telemetryData) {
 void ImageTag::processNextImage(){
 
     if (!imageQueue.empty()){
+        ImageData currentData = imageQueue.front();
+        imageQueue.pop();
+
+       string image = currentData.image;
+
+       //ExifData exifData;
 
     }
 }

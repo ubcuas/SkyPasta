@@ -5,6 +5,7 @@
 #include "Spinnaker.h"
 #include <queue>
 #include "lib/json.hpp"
+#include "exiv2.hpp"
 
 #ifndef SKYPASTA_IMAGETAG_H
 #define SKYPASTA_IMAGETAG_H
@@ -13,13 +14,13 @@ using namespace Spinnaker;
 using namespace std;
 using json = nlohmann::json;
 
-struct imageData{
-    ImagePtr image;
+struct ImageData{
+    string image;
     long timestamp;
     double timeTaken;
 };
 
-struct telemetryData{
+struct TelemetryData{
     json data;
     long timestamp;
 };
@@ -27,13 +28,13 @@ struct telemetryData{
 class ImageTag {
 public:
     ImageTag(){};
-    void addImage(const ImagePtr image, const long timestamp, const double time_taken);
+    void addImage(const string image, const long timestamp, const double time_taken);
     void addTelemetry(const char telemetryData []);
     void processNextImage();
 
 private:
-    queue <imageData> imageQueue;
-    queue <telemetryData> telemetryQueue;
+    queue <ImageData> imageQueue;
+    queue <TelemetryData> telemetryQueue;
 };
 
 

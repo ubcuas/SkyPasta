@@ -56,7 +56,7 @@ TriggerType FlirCamera::getTriggerType() {
     return currentTrigger;
 }
 
-int& FlirCamera::getNumCameras() {
+int FlirCamera::getNumCameras() const {
     return numberOfCameras;
 }
 
@@ -87,7 +87,7 @@ void FlirCamera::configureTrigger(){
         return;
     }
 
-    if (currentTrigger == SOFTWARE)
+    if (currentTrigger == TriggerType::SOFTWARE)
     {
         // Set trigger mode to software
         CEnumEntryPtr ptrTriggerSourceSoftware = ptrTriggerSource->GetEntryByName("Software");
@@ -101,7 +101,7 @@ void FlirCamera::configureTrigger(){
 
         cout << "Trigger source set to software..." << endl;
     }
-    else if (currentTrigger == HARDWARE)
+    else if (currentTrigger == TriggerType::HARDWARE)
     {
         // Set trigger mode to hardware ('Line0')
         CEnumEntryPtr ptrTriggerSourceHardware = ptrTriggerSource->GetEntryByName("Line0");

@@ -2,11 +2,15 @@
 // Created by Jonathan Hirsch on 2/15/20.
 //
 
-#ifndef SKYPASTA_FLIRCAMERA_H
-#define SKYPASTA_FLIRCAMERA_H
+#ifndef FLIR_FLIRCAMERA_H
+#define FLIR_FLIRCAMERA_H
 
 #include <iostream>
 #include "Spinnaker.h"
+#include <stdio.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <unistd.h>
 
 #pragma once
 
@@ -16,7 +20,7 @@ using namespace Spinnaker::GenICam;
 
 using namespace::std;
 
-enum TriggerType
+enum class TriggerType
 {
     SOFTWARE,
     HARDWARE
@@ -32,7 +36,7 @@ public:
     int cleanExit();
 
     int setTrigger(const TriggerType trigger);
-    int& getNumCameras();
+    int getNumCameras() const;
     CameraPtr& getCamera() {return this-> cameraPtr;}
     TriggerType getTriggerType();
 
@@ -41,10 +45,10 @@ private:
 
     SystemPtr system;
     CameraPtr cameraPtr;
-    TriggerType currentTrigger = SOFTWARE;
+    TriggerType currentTrigger = TriggerType::SOFTWARE;
     CameraList cameraList;
     int numberOfCameras = 0;
 
 
 };
-#endif //SKYPASTA_FLIRCAMERA_H
+#endif //FLIR_FLIRCAMERA_H

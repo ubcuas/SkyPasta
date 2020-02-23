@@ -5,25 +5,25 @@
 #include "ImageRetriever.h"
 #include "SpinGenApi/SpinnakerGenApi.h"
 #include "Telemetry.h"
-#include "ImageTag.h"
 
 
-#define PORT 5000
-#define ADDRESS "127.0.0.1"
+constexpr int PORT = 5000;
+constexpr auto ADDRESS  = "127.0.0.1";
+constexpr int RATE = 2; // delay between each image acquisition trigger
 
 
 using namespace std;
 
-static const int RATE = 2; // delay between each image acquisition trigger
+
 
 bool stopFlag = false;
 
-void acquireImagesFixedRate(int rate, ImageRetriever *ca){
-    ca->startAcquisition();
+void acquireImagesFixedRate(int rate, ImageRetriever *imageRetriever){
+    imageRetriever->startAcquisition();
 
     while (!stopFlag){
         cout << "aquiring........." << endl;
-        auto myFuture(async(launch::async, &ImageRetriever::triggerCameraOnce, ca));
+        auto triggerCameraOnceFuture(async(launch::async, &ImageRetriever::triggerCameraOnce, imageRetriever));
         if (stopFlag){
             break;
         }
@@ -32,7 +32,7 @@ void acquireImagesFixedRate(int rate, ImageRetriever *ca){
         cout << endl;
     }
 
-    ca -> stopAcquisition();
+    imageRetriever -> stopAcquisition();
 }
 
 void readFromSocket(Telemetry *telemetry){
@@ -57,32 +57,30 @@ int main() {
 
     try {
         FlirCamera flirCamera;
-        flirCamera.setTrigger(SOFTWARE);
-
-        ImageTag imageTag;
+        flirCamera.setTrigger(TriggerType::SOFTWARE);
 
         cout << "Cameras Connected: " << flirCamera.getNumCameras() << endl;
-        ImageRetriever ca(flirCamera.getCamera(), &imageTag);
-        ca.setTriggerMode(SINGLE_FRAME);
+        ImageRetriever imageRetriever(flirCamera.getCamera());
+        imageRetriever.setTriggerMode(TriggerMode::SINGLE_FRAME);
 
-        Telemetry telemetry(ADDRESS,PORT, &imageTag);
+        Telemetry telemetry(ADDRESS,PORT);
         telemetry.connectServer();
 
 
-        auto myFuture(async(launch::async, acquireImagesFixedRate, RATE, &ca));
+        auto acquireImagesFixedRateFuture(async(launch::async, acquireImagesFixedRate, RATE, &imageRetriever));
 
-        auto myFuture2(async(launch::async, readFromSocket, &telemetry));
+        auto readFromSocketFuture(async(launch::async, readFromSocket, &telemetry));
 
         sleep(20);
         stopFlag = true;
 
-        myFuture.get();
+        acquireImagesFixedRateFuture.get();
 
-        ca.releaseCamera();
+        imageRetriever.releaseCamera();
 
         flirCamera.cleanExit();
     }
-    catch (Exception e){
+    catch (const Exception& e){
         cout << "Error in Main:  ";
         cout << e.what() << endl;
     }

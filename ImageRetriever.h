@@ -3,12 +3,13 @@
 //
 #include "FlirCamera.h"
 #include "ImageTag.h"
+
 #include <map>
+#ifndef SKYPASTA_CONTINUOUSACQUISITION_H
+#define SKYPASTA_CONTINUOUSACQUISITION_H
 
-#ifndef SKYPASTA_IMAGERETRIEVER_H
-#define SKYPASTA_IMAGERETRIEVER_H
+enum class TriggerMode{
 
-enum TriggerMode{
     CONTINUOUS,
     SINGLE_FRAME
     //MULTI_FRAME
@@ -16,15 +17,19 @@ enum TriggerMode{
 
 class ImageRetriever {
 public:
+
     ImageRetriever(const CameraPtr cameraPtr, ImageTag *imageTag);
+
     void startAcquisition();
     int stopAcquisition();
     void releaseCamera(){cameraPtr = nullptr;};
     void triggerCameraOnce();
 
     void setTriggerMode(const TriggerMode triggerMode);
-    void setContinuousRate(const int continousRate){ this -> continousRate = continousRate;};
-    int getContinuousRate()const {return continousRate;}
+
+    void setContinuousRate(const int continousRate){ this -> continuousRate = continousRate;};
+    int getContinuousRate()const {return continuousRate;}
+
     bool isRunning()const {return running;};
 
 private:
@@ -35,14 +40,21 @@ private:
 
 
     CameraPtr cameraPtr = nullptr;
+
     ImageTag *imageTag;
-    TriggerMode currentTriggerMode = CONTINUOUS;
+    TriggerMode currentTriggerMode = TriggerMode::CONTINUOUS;
     map<TriggerMode, string> triggerModeMap;
 
-    int continousRate = 1;
+    int continuousRate = 1;
     bool running = false;
     bool stopFlag = false;
+    double totalTime = 0;
+    int ctr = 0;
+    bool singleFrameModeEnabled = true;
+
+    struct timeval startTime, endTime;
 };
 
 
-#endif // IMAGERETRIEVER_H
+#endif
+

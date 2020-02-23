@@ -6,40 +6,30 @@
 #include <sys/time.h>
 #include <iomanip>
 #include <sys/stat.h>
-#include <chrono>
-
-
-double totalTime = 0;
-
-struct timeval start, endd;
-int ctr = 0;
-
-bool singleFrameModeEnabled = true;
-
 
 
 namespace {
-    double calculateTimeTaken(timeval &startTime, timeval &endTime){
+    double calculateTimeTaken (timeval& startTime, timeval& endTime){
 
-        double time_taken;
+        double timeTaken;
 
-        time_taken = (endd.tv_sec - start.tv_sec) * 1e6;
-        time_taken = (time_taken + (endd.tv_usec - start.tv_usec)) * 1e-6;
+        timeTaken = (startTime.tv_sec - startTime.tv_sec) * 1e6;
+        timeTaken = (timeTaken + (endTime.tv_usec -
+                                  startTime.tv_usec)) * 1e-6;
 
-        cout << "Time taken by program is : " << fixed << time_taken << setprecision(6);
+        cout << "Time taken by program is : " << fixed
+             << timeTaken << setprecision(6);
         cout << " sec" << endl;
 
-        totalTime += time_taken;
-        return time_taken;
+        return timeTaken;
     }
 }
 
-ImageRetriever::ImageRetriever(const CameraPtr cameraPtr, ImageTag *imageTag){
+ImageRetriever::ImageRetriever(const CameraPtr cameraPtr){
     this -> cameraPtr = cameraPtr;
-    this -> imageTag = imageTag;
 
-    triggerModeMap[CONTINUOUS] = "Continuous";
-    triggerModeMap[SINGLE_FRAME] = "SingleFrame";
+    triggerModeMap[TriggerMode::CONTINUOUS] = "Continuous";
+    triggerModeMap[TriggerMode::SINGLE_FRAME] = "SingleFrame";
     //triggerModeMap[MULTI_FRAME] = "MultiFrame";
 
     if (cameraPtr == nullptr){
@@ -55,7 +45,7 @@ ImageRetriever::ImageRetriever(const CameraPtr cameraPtr, ImageTag *imageTag){
     }
 }
 
-void ImageRetriever::setTriggerMode(const TriggerMode triggerMode){
+void ImageRetriever::setTriggerMode(TriggerMode triggerMode){
     this -> currentTriggerMode = triggerMode;
     configureImageRetriever();
 }
@@ -131,8 +121,8 @@ void ImageRetriever::startAcquisition() {
 
         cout << "Begin Acquisition..." << endl;
         switch (currentTriggerMode){
-            case SINGLE_FRAME: singleFrameModeEnabled = true; break;
-            case CONTINUOUS: acquireImagesContinuous(nodeMap); break;
+            case TriggerMode::SINGLE_FRAME: singleFrameModeEnabled = true; break;
+            case TriggerMode::CONTINUOUS: acquireImagesContinuous(nodeMap); break;
             default: stopAcquisition(); break;
         }
 
@@ -165,17 +155,13 @@ int ImageRetriever::stopAcquisition() {
 
 void ImageRetriever::acquireImage(INodeMap &nodeMap) {
 
-    gettimeofday(&start, NULL);
-    long ms = start.tv_sec * 1000 + start.tv_usec / 1000;
-    triggerImageRetrieval(nodeMap);
+    gettimeofday(&startTime, NULL);
     ctr ++;
+    triggerImageRetrieval(nodeMap);
+
     ImagePtr pResultImage = cameraPtr ->GetNextImage();
     cout << "_____________________________" << endl;
     cout << ":: Acquisition# " << ctr << endl;
-    string filenameStr = "";
-
-
-
     if (pResultImage->IsIncomplete())
     {
         cout << "Image incomplete with image status " << pResultImage->GetImageStatus() << "..." << endl
@@ -191,19 +177,14 @@ void ImageRetriever::acquireImage(INodeMap &nodeMap) {
 
         convertedImage->Save(filename.str().c_str());
 
-        filenameStr = filename.str();
-
-        cout << "Image saved at " << filenameStr << endl;
+        cout << "Image saved at " << filename.str() << endl;
     }
-
 
     pResultImage->Release();
 
-    gettimeofday(&endd, NULL);
+    gettimeofday(&endTime, NULL);
 
-    double timeTaken = calculateTimeTaken(start, endd);
-
-    imageTag->addImage(filenameStr, ms, timeTaken);
+    totalTime += calculateTimeTaken(startTime, endTime);
 }
 
 void ImageRetriever::acquireImagesContinuous(INodeMap& nodeMap) {
@@ -218,7 +199,7 @@ void ImageRetriever::acquireImagesContinuous(INodeMap& nodeMap) {
         acquireImage(nodeMap);
 
         cout << endl;
-        sleep(continousRate);
+        sleep(continuousRate);
     }
     cameraPtr ->EndAcquisition();
 }

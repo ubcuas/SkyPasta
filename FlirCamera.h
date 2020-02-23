@@ -19,34 +19,36 @@ using namespace Spinnaker::GenApi;
 using namespace Spinnaker::GenICam;
 
 using namespace::std;
-//using namespace::boost;
 
-enum TriggerType
+enum class TriggerType
 {
     SOFTWARE,
     HARDWARE
 };
 
 
+
 class FlirCamera {
 public:
     FlirCamera();
-    int cleanExit();
-    void switchTrigger();
-    int getNumCameras();
-    TriggerType getTriggerType();
     void initialize();
     void configureTrigger();
-    int setTrigger(TriggerType trigger);
-    void disableTrigger();
-    CameraPtr getCamera(){return this-> cameraPtr;};
+    int cleanExit();
+
+    int setTrigger(const TriggerType trigger);
+    int getNumCameras() const;
+    CameraPtr& getCamera() {return this-> cameraPtr;}
+    TriggerType getTriggerType();
 
 private:
+    void disableTrigger();
+
     SystemPtr system;
     CameraPtr cameraPtr;
-    TriggerType currentTrigger = SOFTWARE;
+    TriggerType currentTrigger = TriggerType::SOFTWARE;
     CameraList cameraList;
     int numberOfCameras = 0;
+
 
 };
 #endif //FLIR_FLIRCAMERA_H

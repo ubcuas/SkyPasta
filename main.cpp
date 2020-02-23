@@ -1,81 +1,88 @@
 #include <iostream>
-#include <stdio.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
 #include <unistd.h>
-#include <boost/thread.hpp>
 #include <future>
-
 #include "FlirCamera.h"
 #include "ImageRetriever.h"
-
 #include "SpinGenApi/SpinnakerGenApi.h"
+#include "Telemetry.h"
 
-#include "SpinnakerPlatform.h"
 
-#define PORT 5000
+constexpr int PORT = 5000;
+constexpr auto ADDRESS  = "127.0.0.1";
+constexpr int RATE = 2; // delay between each image acquisition trigger
 
 
 using namespace std;
+
+
+
+bool stopFlag = false;
+
+void acquireImagesFixedRate(int rate, ImageRetriever *imageRetriever){
+    imageRetriever->startAcquisition();
+
+    while (!stopFlag){
+        cout << "aquiring........." << endl;
+        auto triggerCameraOnceFuture(async(launch::async, &ImageRetriever::triggerCameraOnce, imageRetriever));
+        if (stopFlag){
+            break;
+        }
+        sleep(rate);
+
+        cout << endl;
+    }
+
+    imageRetriever -> stopAcquisition();
+}
+
+void readFromSocket(Telemetry *telemetry){
+
+    if (!telemetry->isConnected()){
+        cout << "Telemetry error: Not connected" << endl;
+        return;
+    }
+    while (!stopFlag && telemetry->isConnected()){
+        if (telemetry->readData() == -1){
+            return;
+        }
+        if (stopFlag){
+            break;
+        }
+        cout << endl;
+    }
+}
 
 
 int main() {
 
     try {
         FlirCamera flirCamera;
-        flirCamera.setTrigger(SOFTWARE);
+        flirCamera.setTrigger(TriggerType::SOFTWARE);
 
         cout << "Cameras Connected: " << flirCamera.getNumCameras() << endl;
-        ImageRetriever ca(flirCamera.getCamera());
+        ImageRetriever imageRetriever(flirCamera.getCamera());
+        imageRetriever.setTriggerMode(TriggerMode::SINGLE_FRAME);
 
-        auto myFuture(async(launch::async, &ImageRetriever::startAcquisition, &ca));
+        Telemetry telemetry(ADDRESS,PORT);
+        telemetry.connectServer();
 
-        sleep(5);
-        ca.stopAcquisition();
-        myFuture.get();
-        ca.releaseCamera();
+
+        auto acquireImagesFixedRateFuture(async(launch::async, acquireImagesFixedRate, RATE, &imageRetriever));
+
+        auto readFromSocketFuture(async(launch::async, readFromSocket, &telemetry));
+
+        sleep(20);
+        stopFlag = true;
+
+        acquireImagesFixedRateFuture.get();
+
+        imageRetriever.releaseCamera();
 
         flirCamera.cleanExit();
     }
-    catch (Exception e){
+    catch (const Exception& e){
         cout << "Error in Main:  ";
         cout << e.what() << endl;
     }
-
-
-
-
-//    int sock = 0, valread;
-//    struct sockaddr_in serv_addr;
-//    char *hello = "Hello from client";
-//    char buffer[1024] = {0};
-//    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-//    {
-//        printf("\n Socket creation error \n");
-//        return -1;
-//    }
-//
-//    serv_addr.sin_family = AF_INET;
-//    serv_addr.sin_port = htons(PORT);
-//
-//    // Convert IPv4 and IPv6 addresses from text to binary form
-//    if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr)<=0)
-//    {
-//        printf("\nInvalid address/ Address not supported \n");
-//        return -1;
-//    }
-//
-//    if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-//    {
-//        printf("\nConnection Failed \n");
-//        return -1;
-//    }
-//
-//
-//    valread = read( sock , buffer, 1024);
-//    cout << buffer << endl << endl;
-//    cout << "choose trigger: s or h" << endl;
-
-
 }
 

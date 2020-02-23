@@ -1,1 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/c++  -g -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.15.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names  CMakeFiles/Flir.dir/main.cpp.o CMakeFiles/Flir.dir/FlirCamera.cpp.o  -o Flir /usr/local/lib/libSpinnaker.dylib 

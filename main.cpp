@@ -5,6 +5,7 @@
 #include "ImageRetriever.h"
 #include "SpinGenApi/SpinnakerGenApi.h"
 #include "Telemetry.h"
+#include <exiv2/exiv2.hpp>
 
 
 constexpr int PORT = 5000;

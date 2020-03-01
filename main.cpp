@@ -5,7 +5,6 @@
 #include "ImageRetriever.h"
 #include "SpinGenApi/SpinnakerGenApi.h"
 #include "Telemetry.h"
-#include <exiv2/exiv2.hpp>
 
 
 constexpr int PORT = 5000;
@@ -53,24 +52,39 @@ void readFromSocket(Telemetry *telemetry){
     }
 }
 
+void tagImages(ImageTag *imageTag){
+
+    while(!stopFlag) {
+       imageTag->processNextImage();
+        if (stopFlag){
+            break;
+        }
+    }
+}
+
 
 int main() {
 
     try {
+
+        ImageTag imageTag;
+
         FlirCamera flirCamera;
         flirCamera.setTrigger(TriggerType::SOFTWARE);
 
         cout << "Cameras Connected: " << flirCamera.getNumCameras() << endl;
-        ImageRetriever imageRetriever(flirCamera.getCamera());
+        ImageRetriever imageRetriever(flirCamera.getCamera(), &imageTag);
         imageRetriever.setTriggerMode(TriggerMode::SINGLE_FRAME);
 
-        Telemetry telemetry(ADDRESS,PORT);
+        Telemetry telemetry(ADDRESS,PORT, &imageTag);
         telemetry.connectServer();
 
 
         auto acquireImagesFixedRateFuture(async(launch::async, acquireImagesFixedRate, RATE, &imageRetriever));
 
         auto readFromSocketFuture(async(launch::async, readFromSocket, &telemetry));
+
+        auto processNextImageFuture(async(launch::async, tagImages, &imageTag));
 
         sleep(20);
         stopFlag = true;

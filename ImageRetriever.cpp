@@ -25,8 +25,9 @@ namespace {
     }
 }
 
-ImageRetriever::ImageRetriever(const CameraPtr cameraPtr){
+ImageRetriever::ImageRetriever(const CameraPtr cameraPtr, ImageTag *imageTag){
     this -> cameraPtr = cameraPtr;
+    this -> imageTag = imageTag;
 
     triggerModeMap[TriggerMode::CONTINUOUS] = "Continuous";
     triggerModeMap[TriggerMode::SINGLE_FRAME] = "SingleFrame";
@@ -166,6 +167,7 @@ void ImageRetriever::acquireImage(INodeMap &nodeMap) {
     {
         cout << "Image incomplete with image status " << pResultImage->GetImageStatus() << "..." << endl
              << endl;
+        pResultImage->Release();
     }
     else{
         cout << "Grabbed image: W*H = " << pResultImage ->GetWidth() << "*" << pResultImage->GetHeight() << endl;
@@ -178,13 +180,15 @@ void ImageRetriever::acquireImage(INodeMap &nodeMap) {
         convertedImage->Save(filename.str().c_str());
 
         cout << "Image saved at " << filename.str() << endl;
+
+        pResultImage->Release();
+        gettimeofday(&endTime, NULL);
+
+        double timeTaken = calculateTimeTaken(startTime, endTime);
+        totalTime += timeTaken;
+
+        imageTag->addImage(filename.str(), pResultImage->GetTimeStamp(), timeTaken);
     }
-
-    pResultImage->Release();
-
-    gettimeofday(&endTime, NULL);
-
-    totalTime += calculateTimeTaken(startTime, endTime);
 }
 
 void ImageRetriever::acquireImagesContinuous(INodeMap& nodeMap) {

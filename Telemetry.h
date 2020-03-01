@@ -16,10 +16,10 @@
 
 
 
-using namespace std;
+
 class Telemetry {
 public:
-    Telemetry(const string address, const int port, ImageTag *imageTag);
+    Telemetry(const std::string address, const int port, ImageTag *imageTag);
     void connectServer();
     int readData();
 

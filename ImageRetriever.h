@@ -43,7 +43,7 @@ private:
 
     ImageTag *imageTag;
     TriggerMode currentTriggerMode = TriggerMode::CONTINUOUS;
-    map<TriggerMode, string> triggerModeMap;
+    std::map<TriggerMode, std::string> triggerModeMap;
 
     int continuousRate = 1;
     bool running = false;
@@ -55,7 +55,6 @@ private:
     struct timeval startTime, endTime;
 };
 
-// test
 
 
 #endif

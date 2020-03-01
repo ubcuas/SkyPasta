@@ -3,6 +3,9 @@
 //
 
 #include "Telemetry.h"
+
+using namespace std;
+
 Telemetry::Telemetry(const string address, const int port, ImageTag *imageTag){
     addressChar = address.c_str();
     this -> port = port;

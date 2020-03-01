@@ -4,6 +4,8 @@
 
 #include "FlirCamera.h"
 
+using namespace::std;
+
 FlirCamera::FlirCamera(){
     system = System::GetInstance();
     initialize();

@@ -3,27 +3,13 @@
 //
 
 #include "ImageRetriever.h"
-#include <sys/time.h>
+#include <ctime>
+#include <chrono>
 #include <iomanip>
 #include <sys/stat.h>
+#include<ratio>
 
-
-namespace {
-    double calculateTimeTaken (timeval& startTime, timeval& endTime){
-
-        double timeTaken;
-
-        timeTaken = (startTime.tv_sec - startTime.tv_sec) * 1e6;
-        timeTaken = (timeTaken + (endTime.tv_usec -
-                                  startTime.tv_usec)) * 1e-6;
-
-        cout << "Time taken by program is : " << fixed
-             << timeTaken << setprecision(6);
-        cout << " sec" << endl;
-
-        return timeTaken;
-    }
-}
+using namespace std;
 
 ImageRetriever::ImageRetriever(const CameraPtr cameraPtr, ImageTag *imageTag){
     this -> cameraPtr = cameraPtr;
@@ -155,9 +141,10 @@ int ImageRetriever::stopAcquisition() {
 }
 
 void ImageRetriever::acquireImage(INodeMap &nodeMap) {
-
-    gettimeofday(&startTime, NULL);
     ctr ++;
+
+    std::chrono::high_resolution_clock::time_point startTime = std::chrono::high_resolution_clock::now();
+
     triggerImageRetrieval(nodeMap);
 
     ImagePtr pResultImage = cameraPtr ->GetNextImage();
@@ -182,14 +169,24 @@ void ImageRetriever::acquireImage(INodeMap &nodeMap) {
         cout << "Image saved at " << filename.str() << endl;
 
         pResultImage->Release();
-        gettimeofday(&endTime, NULL);
 
-        double timeTaken = calculateTimeTaken(startTime, endTime);
-        totalTime += timeTaken;
+        std::chrono::high_resolution_clock::time_point endTime = std::chrono::high_resolution_clock::now();
 
-        imageTag->addImage(filename.str(), pResultImage->GetTimeStamp(), timeTaken);
+        std::chrono::duration<double, std::milli> timeSpan = endTime - startTime;
+        double timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+
+        cout << "time taken by program: " << timeSpan.count() << endl;
+
+
+        cout << "Timestamp:" << setprecision(20) << timestamp << endl;
+
+        //double timeTaken = calculateTimeTaken(startTime, endTime);
+        totalTime += timeSpan.count();
+
+        imageTag->addImage(filename.str(), timestamp - timeSpan.count()/2, timeSpan.count());
     }
 }
+
 
 void ImageRetriever::acquireImagesContinuous(INodeMap& nodeMap) {
     cameraPtr ->BeginAcquisition();

@@ -14,8 +14,6 @@ constexpr int RATE = 2; // delay between each image acquisition trigger
 
 using namespace std;
 
-
-
 bool stopFlag = false;
 
 void acquireImagesFixedRate(int rate, ImageRetriever *imageRetriever){
@@ -53,7 +51,6 @@ void readFromSocket(Telemetry *telemetry){
 }
 
 void tagImages(ImageTag *imageTag){
-
     while(!stopFlag) {
        imageTag->processNextImage();
         if (stopFlag){

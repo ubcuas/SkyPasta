@@ -12,6 +12,12 @@ using namespace Spinnaker;
 using namespace std;
 
 namespace {
+
+    void erase0anddot(string& str){
+        str.erase(str.find_last_not_of('0') + 1, std::string::npos);
+        str.erase(str.find_last_not_of('.') + 1, std::string::npos);
+    }
+
     string convertToDMS(double degrees) {
 
         double minutes = 0;
@@ -21,7 +27,6 @@ namespace {
             minutes = (degrees - ceil(degrees)) * -60.0;
         }
 
-
         double seconds = (minutes - floor(minutes)) * 60.0;
         double tenths = (seconds - floor(seconds)) * 10.0;
 
@@ -29,14 +34,9 @@ namespace {
         string minutesStr = to_string(floor(minutes));
         string secondsStr = to_string(seconds);
 
-        degreesStr.erase(degreesStr.find_last_not_of('0') + 1, std::string::npos);
-        degreesStr.erase(degreesStr.find_last_not_of('.') + 1, std::string::npos);
-
-        minutesStr.erase(minutesStr.find_last_not_of('0') + 1, std::string::npos);
-        minutesStr.erase(minutesStr.find_last_not_of('.') + 1, std::string::npos);
-
-        secondsStr.erase(secondsStr.find_last_not_of('0') + 1, std::string::npos);
-        secondsStr.erase(secondsStr.find_last_not_of('.') + 1, std::string::npos);
+        erase0anddot(degreesStr);
+        erase0anddot(minutesStr);
+        erase0anddot(secondsStr);
 
         string DMS = degreesStr + "º" + minutesStr + "\'" + secondsStr + "\"";
 
@@ -111,7 +111,6 @@ void ImageTag::processNextImage() {
         XMPData["Xmp.UAS.TimestampImage"] = currentData.timestamp;
         XMPData["Xmp.UAS.Time_Difference"] = abs(currentTelem.timestamp - currentData.timestamp);
         XMPData["Xmp.UAS.json"] = currentTelem.data;
-
 
         image->setXmpData(XMPData);
         image->writeMetadata();

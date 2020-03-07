@@ -38,7 +38,8 @@ namespace {
         erase0anddot(minutesStr);
         erase0anddot(secondsStr);
 
-        string DMS = degreesStr + "º" + minutesStr + "\'" + secondsStr + "\"";
+        string DMS = degreesStr + "\u00BA" + to_string(char(65)) + minutesStr + "\'" + secondsStr + "\"";
+        // \u00BA = 'º'
 
         cout << DMS << endl;
 
@@ -102,6 +103,8 @@ void ImageTag::processNextImage() {
         Exiv2::Image::AutoPtr image = Exiv2::ImageFactory::open(imageLocation);
         Exiv2::XmpData &XMPData = image->xmpData();
 
+        image->writeXmpFromPacket(true);
+
         XMPData["Xmp.UAS.Latitude"] = currentTelem.lat;
         XMPData["Xmp.UAS.Longitude"] = currentTelem.lon;
         XMPData["Xmp.UAS.Heading"] = currentTelem.heading;
@@ -114,6 +117,8 @@ void ImageTag::processNextImage() {
 
         image->setXmpData(XMPData);
         image->writeMetadata();
+        image.release();
+        cout << "Wrote XMP data to " << imageLocation << endl;
         imageQueue.pop();
         telemetryList.pop();
     }

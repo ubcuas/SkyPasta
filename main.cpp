@@ -53,9 +53,6 @@ void readFromSocket(Telemetry *telemetry){
 void tagImages(ImageTag *imageTag){
     while(!stopFlag) {
        imageTag->processNextImage();
-        if (stopFlag){
-            break;
-        }
     }
 }
 

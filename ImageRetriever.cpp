@@ -6,7 +6,7 @@
 
 using namespace std;
 
-ImageRetriever::ImageRetriever(const CameraPtr cameraPtr, ImageTag *imageTag) {
+ImageRetriever::ImageRetriever(const CameraPtr& cameraPtr, ImageTag *imageTag) {
     this->cameraPtr = cameraPtr;
     this->imageTag = imageTag;
 
@@ -17,7 +17,7 @@ ImageRetriever::ImageRetriever(const CameraPtr cameraPtr, ImageTag *imageTag) {
         cout << "No Camera devices attached to Image Retriever " << endl;
         return;
     }
-    if (cameraPtr->IsInitialized() == false) {
+    if (!cameraPtr->IsInitialized()) {
         cout << "camera not initialized" << endl;
         return;
     } else {
@@ -32,7 +32,7 @@ void ImageRetriever::setTriggerMode(TriggerMode triggerMode) {
 
 void ImageRetriever::triggerCameraOnce() {
     cameraPtr->BeginAcquisition();
-    if (singleFrameModeEnabled == true) {
+    if (singleFrameModeEnabled) {
         acquireImage(cameraPtr->GetNodeMap());
     }
     cameraPtr->EndAcquisition();
@@ -125,8 +125,8 @@ void ImageRetriever::stopAcquisition() {
 
 // acquires a single image
 // Converts Image to BayerRG8,
-// calculates image timestamp and capture duration
-// adds image location & timestamp to ImageTag
+// calculates image timestamp_telem and capture duration
+// adds image location & timestamp_telem to ImageTag
 void ImageRetriever::acquireImage(INodeMap &nodeMap) {
     // start clock, acquire image, and stop clock
     imageNumber++;
@@ -140,7 +140,8 @@ void ImageRetriever::acquireImage(INodeMap &nodeMap) {
     if (pResultImage->IsIncomplete()) {
         cout << "Image incomplete with image status " << pResultImage->GetImageStatus() << "..." << endl << endl;
         pResultImage->Release();
-    } else {
+
+    } else { // Convert image
         cout << "Grabbed image: W*H = " << pResultImage->GetWidth() << "*" << pResultImage->GetHeight() << endl;
 
         ImagePtr convertedImage = pResultImage->Convert(PixelFormat_BayerRG8, HQ_LINEAR);
@@ -151,9 +152,9 @@ void ImageRetriever::acquireImage(INodeMap &nodeMap) {
 
         pResultImage->Release();
 
-        // calculate capture duration, save timestamp and image location to imageTag
+        // calculate capture duration, save timestamp_telem and image location to imageTag
         std::chrono::duration<double, std::milli> timeSpan = endTime - startTime;
-        double timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(
+        long timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(
                 std::chrono::system_clock::now().time_since_epoch()).count();
         cout << "time taken by program: " << timeSpan.count() << endl;
         cout << "Timestamp:" << setprecision(20) << timestamp << endl;

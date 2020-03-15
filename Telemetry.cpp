@@ -12,11 +12,12 @@ Telemetry::Telemetry(const string address, const int port, ImageTag *imageTag){
     this -> imageTag = imageTag;
 }
 
-void Telemetry::connectServer(){
+int Telemetry::connectServer(){
+    connected = false;
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
         printf("\n Socket creation error \n");
-        return;
+        return -1;
     }
 
     serv_addr.sin_family = AF_INET;
@@ -26,13 +27,13 @@ void Telemetry::connectServer(){
     if(inet_pton(AF_INET, addressChar, &serv_addr.sin_addr)<=0)
     {
         printf("\nInvalid address/ Address not supported \n");
-        return;
+        return -1;
     }
 
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
     {
         printf("\nConnection Failed \n");
-        return;
+        return -1;
     }
     connected = true;
 }

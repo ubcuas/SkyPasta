@@ -18,8 +18,7 @@ enum class TriggerMode{
 
 class ImageRetriever {
 public:
-
-    ImageRetriever(const CameraPtr cameraPtr, ImageTag *imageTag);
+    ImageRetriever(const CameraPtr& cameraPtr, ImageTag *imageTag);
 
     void startAcquisition();
     void stopAcquisition();
@@ -27,7 +26,7 @@ public:
     void triggerCameraOnce();
     void setTriggerMode(const TriggerMode triggerMode);
 
-    void setContinuousRate(const int continousRate){ this -> continuousRate = continousRate;};
+    void setContinuousRate(const int continuousRate){ this -> continuousRate = continuousRate;};
     int getContinuousRate()const {return continuousRate;}
     bool isRunning()const {return running;};
 

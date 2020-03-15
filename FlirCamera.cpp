@@ -11,6 +11,7 @@ FlirCamera::FlirCamera() {
     initialize();
 }
 
+// Initialize the first detected camera
 void FlirCamera::initialize() {
     cameraList = system->GetCameras();
     numberOfCameras = cameraList.GetSize();
@@ -26,6 +27,9 @@ void FlirCamera::initialize() {
     configureTrigger();
 }
 
+// Attemps clean exit by releasing all resources and clearing references to ptrs
+// Clean exit will fail if an object holds a reference to a pointer when called,
+// exit code 11 will be thrown
 int FlirCamera::cleanExit() {
     cout << "Attempting clean exit..." << endl;
     try {
@@ -50,8 +54,8 @@ int FlirCamera::cleanExit() {
     return 0;
 }
 
+// Configure Trigger (Software or Hardware) based on user selection
 void FlirCamera::configureTrigger() {
-
     INodeMap &nodeMap = cameraPtr->GetNodeMap();
     CEnumerationPtr ptrTriggerMode = nodeMap.GetNode("TriggerMode");
     disableTrigger();

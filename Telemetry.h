@@ -13,7 +13,7 @@
 class Telemetry {
 public:
     Telemetry(const std::string address, const int port, ImageTag *imageTag);
-    void connectServer();
+    int connectServer();
     int readData();
     bool isConnected()const {return this -> connected;};
 

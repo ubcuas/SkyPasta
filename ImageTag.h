@@ -22,7 +22,8 @@ struct ImageData{
 
 struct TelemetryData{
     std::string data;
-    long timestamp;
+    long timestamp_telem;
+    long timestamp_msg;
     std::string lat;
     std::string lon;
     int heading;
@@ -43,7 +44,7 @@ private:
 
     void sleepForNS(long sleepTime) const;
 
-    double findDifference(long timestamp, TelemetryData telemetryData);
+    long findDifference(long timestamp, const TelemetryData& telemetryData);
     bool removeOldTelemData(long timestamp);
     bool findTelemDataAtTimestamp(long timestamp, TelemetryData& telemetryData);
 };

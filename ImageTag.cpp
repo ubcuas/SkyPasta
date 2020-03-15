@@ -57,8 +57,8 @@ namespace {
     }
 }
 
-void ImageTag::addImage(const string image, const long timestamp, const double timeTaken) {
-    imageQueue.push({image, timestamp, timeTaken});
+void ImageTag::addImage(const string image, const long timestamp) {
+    imageQueue.push({image, timestamp});
     cout << "Adding image:" << timestamp << endl;
 }
 
@@ -72,9 +72,10 @@ void ImageTag::addTelemetry(const char *telemetryData) {
     int altitude_agl_m = telemetryJSON.at("altitude_agl_meters");
     int altitude_msl_m = telemetryJSON.at("altitude_msl_meters");
     int heading = telemetryJSON.at("heading_degrees");
-    long time = telemetryJSON.at("timestamp_msg");
+    long timestamp_msg = telemetryJSON.at("timestamp_msg");
+    long timestamp_telem = telemetryJSON.at("timestamp_telem");
 
-    telemetryList.push({telemetryDataString, time, lat, lon, heading, altitude_agl_m, altitude_msl_m});
+    telemetryList.push({telemetryDataString, timestamp_msg, timestamp_telem, lat, lon, heading, altitude_agl_m, altitude_msl_m});
 }
 
 // Find telemetry data for next image, and writes the data to UAS XMP Namespace on the image location
@@ -87,7 +88,7 @@ void ImageTag::processNextImage() {
 
         bool found = findTelemDataAtTimestamp(currentData.timestamp, currentTelem);
 
-        if (found == false) {
+        if (!found) {
             return;
         }
 
@@ -101,12 +102,13 @@ void ImageTag::processNextImage() {
 
         XMPData["Xmp.UAS.Latitude"] = currentTelem.lat;
         XMPData["Xmp.UAS.Longitude"] = currentTelem.lon;
-        XMPData["Xmp.UAS.Heading"] = currentTelem.heading;
+        XMPData["Xmp.UAS.Heading_dgress"] = currentTelem.heading;
         XMPData["Xmp.UAS.Altitude_AGL_m"] = currentTelem.alt_agl;
         XMPData["Xmp.UAS.Altitude_MSL_m"] = currentTelem.alt_msl;
-        XMPData["Xmp.UAS.TimestampTelem"] = currentTelem.timestamp;
-        XMPData["Xmp.UAS.TimestampImage"] = currentData.timestamp;
-        XMPData["Xmp.UAS.Time_Difference"] = abs(currentTelem.timestamp - currentData.timestamp);
+        XMPData["Xmp.UAS.Timestamp_msg_millis"] = currentTelem.timestamp_msg;
+        XMPData["Xmp.UAS.Timestamp_Telem_millis"] = currentTelem.timestamp_telem;
+        XMPData["Xmp.UAS.Timestamp_Image_millis"] = currentData.timestamp;
+        XMPData["Xmp.UAS.Time_Difference_millis"] = abs(currentTelem.timestamp_telem - currentData.timestamp);
         XMPData["Xmp.UAS.json"] = currentTelem.data;
 
         image->setXmpData(XMPData);
@@ -120,10 +122,10 @@ void ImageTag::processNextImage() {
 
 
 
-// Cycles through old telemetry data, and compares it to given timestamp
+// Cycles through old telemetry data, and compares it to given timestamp_telem
 // Removes telemetry data which is too old to be relevant to the given image
 bool ImageTag::removeOldTelemData(long timestamp) {
-    double difference;
+    long difference;
     auto currentNode = telemetryList.front();
     while (true) {
         difference = findDifference(timestamp, currentNode->data);
@@ -141,9 +143,9 @@ bool ImageTag::removeOldTelemData(long timestamp) {
     return false;
 }
 
-// Returns the absolute value difference between a given timestamp and a given telemetry data point
-double ImageTag::findDifference(long timestamp, TelemetryData telemetryData) {
-    return abs(telemetryData.timestamp - timestamp);
+// Returns the absolute value difference between a given timestamp_telem and a given telemetry data point
+long ImageTag::findDifference(long timestamp, const TelemetryData& telemetryData) {
+    return abs(telemetryData.timestamp_telem - timestamp);
 }
 
 // Finds telemetry data closest to time at which image was taken
@@ -156,12 +158,12 @@ bool ImageTag::findTelemDataAtTimestamp(long timestamp, TelemetryData &telemetry
     // removes old telemetry data
     removeOldTelemData(timestamp);
     auto currentDataNode = telemetryList.front();
-    double currentDataDifference;
-    double nextDataDifference = 0;
+    long currentDataDifference;
+    long nextDataDifference = 0;
 
 /*
- * Compares telemetry data and timestamp on images
- * Strives to produce a delay of < errorMargin ms between the timestamp on image & timestamp of telemetry data.
+ * Compares telemetry data and timestamp_telem on images
+ * Strives to produce a delay of < errorMargin ms between the timestamp_telem on image & timestamp_telem of telemetry data.
  * Returns true if data is found (assigned to telemetryData), false otherwise
  *
  * If current data point is within errorMargin ms error margin, return true & assigns telemetryData to that object
@@ -199,6 +201,6 @@ bool ImageTag::findTelemDataAtTimestamp(long timestamp, TelemetryData &telemetry
 
 // sleep for specified duration in nanoseconds
 void ImageTag::sleepForNS(long sleepTime) const {
-    nanosleep((const struct timespec[]){{0, sleepTime}}, NULL);
+    nanosleep((const struct timespec[]){{0, sleepTime}}, nullptr);
 }
 

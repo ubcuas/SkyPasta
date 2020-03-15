@@ -33,18 +33,33 @@ void acquireImagesFixedRate(int rate, ImageRetriever *imageRetriever){
     imageRetriever -> stopAcquisition();
 }
 
+// Reads Telemetry data from socket, exits on error from telemetry.
 void readFromSocket(Telemetry *telemetry){
+    int exitCode = 0;
+    int reconnectAttempts = 0;
+//    if (!telemetry->isConnected()){
+//        cout << "Telemetry error: Not connected" << endl;
+//        return;
+//    }
+    cout << "Here:" << endl;
+    while (!stopFlag){
+        if (telemetry->readData() == -1 || !telemetry->isConnected()){
+            cout << "Error with server, attempting to reconnect..." << endl;
 
-    if (!telemetry->isConnected()){
-        cout << "Telemetry error: Not connected" << endl;
-        return;
-    }
-    while (!stopFlag && telemetry->isConnected()){
-        if (telemetry->readData() == -1){
-            return;
+            telemetry->connectServer();
+
+            if (telemetry->isConnected()){
+                reconnectAttempts = 0;
+                continue;
+            }
+            //reconnectAttempts ++;
+            if (reconnectAttempts > 5 || stopFlag){
+                return;
+            }
+            sleep(3);
         }
         if (stopFlag){
-            break;
+            return;
         }
         cout << endl;
     }
@@ -80,7 +95,7 @@ int main() {
 
         auto processNextImageFuture(async(launch::async, tagImages, &imageTag));
 
-        sleep(20);
+        sleep(50);
         stopFlag = true;
 
         acquireImagesFixedRateFuture.get();

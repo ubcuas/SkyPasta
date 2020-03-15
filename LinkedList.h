@@ -23,7 +23,7 @@ private:
 
 public:
     LinkedList(){;};
-    ~LinkedList(){};
+    ~LinkedList()= default;;
     void setHead(Node *node);
     void pop();
     void push(const T data);

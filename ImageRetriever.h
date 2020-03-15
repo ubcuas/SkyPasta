@@ -22,7 +22,7 @@ public:
     ImageRetriever(const CameraPtr cameraPtr, ImageTag *imageTag);
 
     void startAcquisition();
-    int stopAcquisition();
+    void stopAcquisition();
     void releaseCamera(){cameraPtr = nullptr;};
     void triggerCameraOnce();
     void setTriggerMode(const TriggerMode triggerMode);

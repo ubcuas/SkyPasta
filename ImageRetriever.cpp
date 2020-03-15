@@ -30,7 +30,6 @@ void ImageRetriever::setTriggerMode(TriggerMode triggerMode) {
     configureImageRetriever();
 }
 
-
 void ImageRetriever::triggerCameraOnce() {
     cameraPtr->BeginAcquisition();
     if (singleFrameModeEnabled == true) {
@@ -39,6 +38,8 @@ void ImageRetriever::triggerCameraOnce() {
     cameraPtr->EndAcquisition();
 }
 
+// Configures trigger mode and insures images can be saved by saving a test file and deleting it
+// Creates image directory if necessary
 void ImageRetriever::configureImageRetriever() {
 
     mkdir("../Images", 0);
@@ -74,13 +75,11 @@ void ImageRetriever::configureImageRetriever() {
     }
 
     int64_t acquisitionModeSet = ptrAcquisitionModeSet->GetValue();
-
     ptrAcquisitionMode->SetIntValue(acquisitionModeSet);
-
     cout << "Acquisition mode set to " << selectedMode << "..." << endl;
-
 }
 
+// Reset all flags and start acquisition if camera is not currently running
 void ImageRetriever::startAcquisition() {
 
     INodeMap &nodeMap = cameraPtr->GetNodeMap();
@@ -96,18 +95,11 @@ void ImageRetriever::startAcquisition() {
             return;
         }
 
-
         cout << "Begin Acquisition..." << endl;
         switch (currentTriggerMode) {
-            case TriggerMode::SINGLE_FRAME:
-                singleFrameModeEnabled = true;
-                break;
-            case TriggerMode::CONTINUOUS:
-                acquireImagesContinuous(nodeMap);
-                break;
-            default:
-                stopAcquisition();
-                break;
+            case TriggerMode::SINGLE_FRAME: singleFrameModeEnabled = true; break;
+            case TriggerMode::CONTINUOUS: acquireImagesContinuous(nodeMap); break;
+            default: stopAcquisition();break;
         }
 
     } else {
@@ -115,7 +107,7 @@ void ImageRetriever::startAcquisition() {
     }
 }
 
-int ImageRetriever::stopAcquisition() {
+void ImageRetriever::stopAcquisition() {
     stopFlag = true;
     cout << "Stopping..." << endl;
     singleFrameModeEnabled = false;
@@ -125,23 +117,24 @@ int ImageRetriever::stopAcquisition() {
     }
 
     cout << "Acquisition Stopped" << endl << endl;
-
     cout << "Number of images Acquired: " << imageNumber << endl;
     cout << "Total Time Taken: " << totalTime << setprecision(6) << "sec" << endl;
     double averageTime = totalTime / imageNumber;
     cout << "Average time per image: " << averageTime << setprecision(6) << "sec" << endl << endl;
-
-    return 0;
 }
 
+// acquires a single image
+// Converts Image to BayerRG8,
+// calculates image timestamp and capture duration
+// adds image location & timestamp to ImageTag
 void ImageRetriever::acquireImage(INodeMap &nodeMap) {
+    // start clock, acquire image, and stop clock
     imageNumber++;
-
     std::chrono::high_resolution_clock::time_point startTime = std::chrono::high_resolution_clock::now();
-
     triggerImageRetrieval(nodeMap);
-
     ImagePtr pResultImage = cameraPtr->GetNextImage();
+    std::chrono::high_resolution_clock::time_point endTime = std::chrono::high_resolution_clock::now();
+
     cout << "_____________________________" << endl;
     cout << ":: Acquisition# " << imageNumber << endl;
     if (pResultImage->IsIncomplete()) {
@@ -158,7 +151,7 @@ void ImageRetriever::acquireImage(INodeMap &nodeMap) {
 
         pResultImage->Release();
 
-        std::chrono::high_resolution_clock::time_point endTime = std::chrono::high_resolution_clock::now();
+        // calculate capture duration, save timestamp and image location to imageTag
         std::chrono::duration<double, std::milli> timeSpan = endTime - startTime;
         double timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(
                 std::chrono::system_clock::now().time_since_epoch()).count();
@@ -169,6 +162,7 @@ void ImageRetriever::acquireImage(INodeMap &nodeMap) {
     }
 }
 
+// Continuously acquire images, sleep a fixed time between each acquisition
 void ImageRetriever::acquireImagesContinuous(INodeMap &nodeMap) {
     cameraPtr->BeginAcquisition();
     while (true) {
@@ -186,6 +180,9 @@ void ImageRetriever::acquireImagesContinuous(INodeMap &nodeMap) {
     cameraPtr->EndAcquisition();
 }
 
+// Capture an image.
+// Uses Software Trigger
+// Camera must run BeginAcquisition() before running this method
 void ImageRetriever::triggerImageRetrieval(INodeMap &nodeMap) {
     CCommandPtr ptrSoftwareTriggerCommand = nodeMap.GetNode("TriggerSoftware");
     if (!IsAvailable(ptrSoftwareTriggerCommand) || !IsWritable(ptrSoftwareTriggerCommand)) {

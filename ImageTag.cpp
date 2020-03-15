@@ -74,9 +74,9 @@ void ImageTag::addTelemetry(const char *telemetryData) {
 
     string lat = convertLatToDMS(telemetryJSON.at("latitude"));
     string lon = convertLonToDMS(telemetryJSON.at("longitude"));
-    string altitude_agl_m = "15";//telemetryJSON.at("altitude_agl_meters");
-    string altitude_msl_m = "10";//telemetryJSON.at("altitude_msl_meters");
-    string heading = "5";//telemetryJSON.at("heading_degrees");
+    int altitude_agl_m = telemetryJSON.at("altitude_agl_meters");
+    int altitude_msl_m = telemetryJSON.at("altitude_msl_meters");
+    int heading = telemetryJSON.at("heading_degrees");
 
 
     long time = telemetryJSON.at("timestamp_msg");

@@ -49,10 +49,8 @@ private:
     bool running = false;
     bool stopFlag = false;
     double totalTime = 0;
-    int ctr = 0;
+    int imageNumber = 0;
     bool singleFrameModeEnabled = true;
-
-    struct timeval startTime, endTime;
 };
 
 

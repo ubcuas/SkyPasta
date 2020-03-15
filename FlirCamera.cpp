@@ -9,7 +9,6 @@ using namespace::std;
 FlirCamera::FlirCamera(){
     system = System::GetInstance();
     initialize();
-
 }
 
 void FlirCamera::initialize(){
@@ -24,9 +23,7 @@ void FlirCamera::initialize(){
     }
 
     cameraPtr = cameraList.GetByIndex(0);
-
     cameraPtr -> Init();
-
     configureTrigger();
 }
 

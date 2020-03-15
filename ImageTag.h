@@ -25,9 +25,9 @@ struct TelemetryData{
     long timestamp;
     std::string lat;
     std::string lon;
-    std::string heading;
-    std::string alt_agl;
-    std::string alt_msl;
+    int heading;
+    int alt_agl;
+    int alt_msl;
 };
 
 class ImageTag {
@@ -41,10 +41,8 @@ private:
     std::queue<ImageData> imageQueue;
     LinkedList<TelemetryData> telemetryList;
 
-
     bool removeOldTelemData(long timestamp);
     double findDifference(long timestamp, TelemetryData telemetryData);
-    void writeImageData(const std::string& file, Exiv2::ExifData& exifData);
     bool findTelemDataAtTimestamp(long timestamp, TelemetryData& telemetryData);
 };
 

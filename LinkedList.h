@@ -1,12 +1,13 @@
 //
 // Created by Jonathan Hirsch on 3/1/20.
+
+
+// Double Ended LinkedList capable of switching out the head
+// and removing references from all entries between the old head and the new head.
 //
 
 #ifndef SKYPASTA_LINKEDLIST_H
 #define SKYPASTA_LINKEDLIST_H
-
-
-
 
 template <class T>
 class LinkedList {

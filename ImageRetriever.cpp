@@ -3,10 +3,6 @@
 //
 
 #include "ImageRetriever.h"
-#include <ctime>
-#include <chrono>
-#include <iomanip>
-#include <sys/stat.h>
 
 using namespace std;
 
@@ -149,13 +145,12 @@ void ImageRetriever::acquireImage(INodeMap &nodeMap) {
     cout << "_____________________________" << endl;
     cout << ":: Acquisition# " << imageNumber << endl;
     if (pResultImage->IsIncomplete()) {
-        cout << "Image incomplete with image status " << pResultImage->GetImageStatus() << "..." << endl
-             << endl;
+        cout << "Image incomplete with image status " << pResultImage->GetImageStatus() << "..." << endl << endl;
         pResultImage->Release();
     } else {
         cout << "Grabbed image: W*H = " << pResultImage->GetWidth() << "*" << pResultImage->GetHeight() << endl;
 
-        ImagePtr convertedImage = pResultImage->Convert(PixelFormat_Mono8, HQ_LINEAR);
+        ImagePtr convertedImage = pResultImage->Convert(PixelFormat_BayerRG8, HQ_LINEAR);
         ostringstream filename;
         filename << "../Images/Trigger-" << imageNumber << ".jpg";
         convertedImage->Save(filename.str().c_str());
@@ -170,7 +165,7 @@ void ImageRetriever::acquireImage(INodeMap &nodeMap) {
         cout << "time taken by program: " << timeSpan.count() << endl;
         cout << "Timestamp:" << setprecision(20) << timestamp << endl;
         totalTime += timeSpan.count();
-        imageTag->addImage(filename.str(), timestamp - timeSpan.count() / 2, timeSpan.count());
+        imageTag->addImage(filename.str(), timestamp - timeSpan.count() / 2);
     }
 }
 

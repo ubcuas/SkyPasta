@@ -14,8 +14,6 @@ constexpr int RATE = 2; // delay between each image acquisition trigger
 
 using namespace std;
 
-
-
 bool stopFlag = false;
 
 void acquireImagesFixedRate(int rate, ImageRetriever *imageRetriever){
@@ -35,20 +33,41 @@ void acquireImagesFixedRate(int rate, ImageRetriever *imageRetriever){
     imageRetriever -> stopAcquisition();
 }
 
+// Reads Telemetry data from socket, exits on error from telemetry.
 void readFromSocket(Telemetry *telemetry){
+    int exitCode = 0;
+    int reconnectAttempts = 0;
+//    if (!telemetry->isConnected()){
+//        cout << "Telemetry error: Not connected" << endl;
+//        return;
+//    }
+    cout << "Here:" << endl;
+    while (!stopFlag){
+        if (telemetry->readData() == -1 || !telemetry->isConnected()){
+            cout << "Error with server, attempting to reconnect..." << endl;
 
-    if (!telemetry->isConnected()){
-        cout << "Telemetry error: Not connected" << endl;
-        return;
-    }
-    while (!stopFlag && telemetry->isConnected()){
-        if (telemetry->readData() == -1){
-            return;
+            telemetry->connectServer();
+
+            if (telemetry->isConnected()){
+                reconnectAttempts = 0;
+                continue;
+            }
+            //reconnectAttempts ++;
+            if (reconnectAttempts > 5 || stopFlag){
+                return;
+            }
+            sleep(3);
         }
         if (stopFlag){
-            break;
+            return;
         }
         cout << endl;
+    }
+}
+
+void tagImages(ImageTag *imageTag){
+    while(!stopFlag) {
+       imageTag->processNextImage();
     }
 }
 
@@ -56,14 +75,17 @@ void readFromSocket(Telemetry *telemetry){
 int main() {
 
     try {
+
+        ImageTag imageTag;
+
         FlirCamera flirCamera;
         flirCamera.setTrigger(TriggerType::SOFTWARE);
 
         cout << "Cameras Connected: " << flirCamera.getNumCameras() << endl;
-        ImageRetriever imageRetriever(flirCamera.getCamera());
+        ImageRetriever imageRetriever(flirCamera.getCamera(), &imageTag);
         imageRetriever.setTriggerMode(TriggerMode::SINGLE_FRAME);
 
-        Telemetry telemetry(ADDRESS,PORT);
+        Telemetry telemetry(ADDRESS,PORT, &imageTag);
         telemetry.connectServer();
 
 
@@ -71,7 +93,9 @@ int main() {
 
         auto readFromSocketFuture(async(launch::async, readFromSocket, &telemetry));
 
-        sleep(20);
+        auto processNextImageFuture(async(launch::async, tagImages, &imageTag));
+
+        sleep(50);
         stopFlag = true;
 
         acquireImagesFixedRateFuture.get();

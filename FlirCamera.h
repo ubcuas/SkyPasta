@@ -7,10 +7,6 @@
 
 #include <iostream>
 #include "Spinnaker.h"
-#include <stdio.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <unistd.h>
 
 #pragma once
 
@@ -18,15 +14,11 @@ using namespace Spinnaker;
 using namespace Spinnaker::GenApi;
 using namespace Spinnaker::GenICam;
 
-using namespace::std;
-
 enum class TriggerType
 {
     SOFTWARE,
     HARDWARE
 };
-
-
 
 class FlirCamera {
 public:
@@ -35,7 +27,7 @@ public:
     void configureTrigger();
     int cleanExit();
 
-    int setTrigger(const TriggerType trigger);
+    void setTrigger(TriggerType trigger);
     int getNumCameras() const;
     CameraPtr& getCamera() {return this-> cameraPtr;}
     TriggerType getTriggerType();
@@ -48,7 +40,5 @@ private:
     TriggerType currentTrigger = TriggerType::SOFTWARE;
     CameraList cameraList;
     int numberOfCameras = 0;
-
-
 };
 #endif //FLIR_FLIRCAMERA_H

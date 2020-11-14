@@ -201,6 +201,7 @@ bool ImageTag::findTelemDataAtTimestamp(long timestamp, TelemetryData &telemetry
 
 // sleep for specified duration in nanoseconds
 void ImageTag::sleepForNS(long sleepTime) const {
-    nanosleep((const struct timespec[]){{0, sleepTime}}, nullptr);
+    const struct timespec sleepTimeSpec = {0, sleepTime};
+    nanosleep(&sleepTimeSpec, nullptr);
 }
 

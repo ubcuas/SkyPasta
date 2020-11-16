@@ -4,7 +4,7 @@
 
 #include "Spinnaker.h"
 #include <queue>
-#include "lib/json.hpp"
+#include "json.hpp"
 #include <exiv2/exiv2.hpp>
 #include "LinkedList.h"
 #include <iomanip>

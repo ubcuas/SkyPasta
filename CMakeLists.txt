@@ -31,15 +31,18 @@ option( EXIV2_BUILD_EXIV2_COMMAND "" OFF )
 add_subdirectory( ${exiv2cmake_SOURCE_DIR} ${exiv2cmake_BINARY_DIR} )
 
 # Spinnaker dependency
-find_library( SPINNAKER_LIB "Spinnaker" HINTS "/opt/spinnaker/lib")
+find_library( SPINNAKER_LIB "Spinnaker" HINTS "/opt/spinnaker/lib" )
+if( NOT SPINNAKER_LIB )
+  message( FATAL_ERROR "You need to install the spinnaker library first: https://www.flir.ca/products/spinnaker-sdk/" )
+endif()
 
 add_executable( skypasta
-	${CMAKE_SOURCE_DIR}/src/main.cpp
-	${CMAKE_SOURCE_DIR}/src/FlirCamera.cpp
-	${CMAKE_SOURCE_DIR}/src/ImageRetriever.cpp
-	${CMAKE_SOURCE_DIR}/src/Telemetry.cpp
-	${CMAKE_SOURCE_DIR}/src/Telemetry.cpp
-	${CMAKE_SOURCE_DIR}/src/ImageTag.cpp
+  ${CMAKE_SOURCE_DIR}/src/main.cpp
+  ${CMAKE_SOURCE_DIR}/src/FlirCamera.cpp
+  ${CMAKE_SOURCE_DIR}/src/ImageRetriever.cpp
+  ${CMAKE_SOURCE_DIR}/src/Telemetry.cpp
+  ${CMAKE_SOURCE_DIR}/src/Telemetry.cpp
+  ${CMAKE_SOURCE_DIR}/src/ImageTag.cpp
 )
 
 target_include_directories( skypasta SYSTEM PUBLIC /opt/spinnaker/include ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}/include )

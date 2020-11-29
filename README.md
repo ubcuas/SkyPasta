@@ -14,59 +14,87 @@
 
 ## Dependencies
 
-SkyPasta must be run in a Linux environment (Ubuntu 20.04 is preferred)
+SkyPasta must be run in a Linux environment (Ubuntu 20.04).
+
+**Docker:**
+
+- Docker
+
+**Local:**
 
 - C++
 - CMake
-- exiv2-0.27.2
-- Spinnaker
+- Spinnaker 2.2.0.48 from FLIR Systems
 
-## Installation
+## Setup
 
-### Exiv2
-Run `$ sudo apt-get install exiv2`
+### Installing Dependencies
 
-### Spinnaker
+**For usage with Docker:**
 
-#### Installing with Docker
+Run `$ git submodule update --init --recursive` to fetch the Spinnaker packages from [spinnaker-rehost](https://gitlab.com/ubcuas/spinnaker-rehost/-/tree/43b03e4437f86cd919c6eb5ab4fac07eefca06b8).
 
-Download `spinnaker-2.2.0.48-Ubuntu20.04-amd64-pkg.tar.gz` from FLIR Systems [here](https://meta.box.lenovo.com/v/link/view/a1995795ffba47dbbe45771477319cc3) then move the file into `skypasta/spinnaker-rehost`.
+If you received `Please make sure you have the correct access rights and the repository exists.` error, instead download `spinnaker-2.2.0.48-Ubuntu20.04-amd64-pkg.tar.gz` and `spinnaker-2.2.0.48-Ubuntu20.04-amd64-pkg.tar.gz` from [here](https://meta.box.lenovo.com/v/link/view/a1995795ffba47dbbe45771477319cc3) then move the files into `skypasta/spinnaker-rehost`.
 
-In the root of `skypasta` run `$ docker build .`
+**For usage without Docker:**
 
-#### Installing without Docker
+Download `spinnaker-2.2.0.48-Ubuntu20.04-amd64-pkg.tar.gz` from [here](https://meta.box.lenovo.com/v/link/view/a1995795ffba47dbbe45771477319cc3) and extract `spinnaker-2.2.0.48-Ubuntu20.04-amd64-pkg.tar.gz`.
 
-Download the Spinnaker SDK from FLIR Systems [here](https://meta.box.lenovo.com/v/link/view/a1995795ffba47dbbe45771477319cc3). Make sure you are installing the amd64-pkg.tar.gz file corresponding to your Linux distro version.
+Go to the root of the folder of the extracted folder (it should be named `spinnaker-2.2.0.48-amd64`) and run `$ sudo apt-get install libavcodec58 libavformat58 libswscale5 libswresample3 libavutil56 libusb-1.0-0 libpcre2-16-0 libdouble-conversion3 libxcb-xinput0 libxcb-xinerama0`
 
-Extract the file you just downloaded. Then inside the terminal, go inside the folder resulting from the extraction.
+Then run `$ sudo sh install_spinnaker.sh`
 
-For Ubuntu 20.04: run `$ sudo apt-get install libavcodec58 libavformat58 libswscale5 libswresample3 libavutil56 libusb-1.0-0 libpcre2-16-0 libdouble-conversion3 libxcb-xinput0 libxcb-xinerama0`
+For more information, refer to the `README.txt` inside of `spinnaker-2.2.0.48-amd64`.
 
-For Ubuntu 18.04: run `$ sudo apt-get install libavcodec57 libavformat57 libswscale4 libswresample2 libavutil55 libusb-1.0-0`
+### Build
 
-After all dependencies are installed, run `$ sudo sh install_spinnaker.sh`. For more details, refer to the README inside of the extracted Spinnaker SDK.
+**With Docker**: in the root of `skypasta` run
 
-Then, in the root of `skypasta`, run:
-```
-$ mkdir build && cd build
-$ cmake ..
+```bash
+docker build .
 ```
 
-## Camera Set-Up
+**Without Docker**: in the root of `skypasta`, run
+
+```bash
+mkdir build && cd build
+cmake ..
+```
+
+Note: every time you rebuild the repository, make sure you are inside of `skypasta/build` and then running `$ cmake ..`.
+
+## Camera Setup
 
 Nothing here yet.
 
 ## Usage
 
-Go inside `skypasta/build` (if you do not have the `build` directory, make sure you have followed all steps in [Installation](#Installation)).
+Go inside `skypasta/build` (if you do not have the `build` directory, make sure you have followed all steps in [Setup](#Setup)).
+
 Run:
-```
-$ make
-$ ./skypasta
+
+```bash
+make
+./skypasta
 ```
 
 ## Troubleshooting
 
-Installing zlib: `$ sudo apt-get install zlib1-dev`
+---
 
-Installing expat: `$ sudo apt-get install libexpat1-dev`
+```bash
+$ docker build .
+COPY failed: stat /var/lib/docker/tmp/docker-builder912847276/spinnaker-rehost/spinnaker-2.2.0.48-Ubuntu20.04-amd64-pkg.tar.gz: no such file or directory
+```
+
+Make sure that `spinnaker-2.2.0.48-Ubuntu20.04-amd64-pkg.tar.gz` is inside of `skypasta/spinnaker-rehost`. If not, make sure you have followed the instructions in [Setup](Setup).
+
+---
+
+Installing zlib:
+`$ sudo apt-get install zlib1-dev`
+
+---
+
+Installing expat:
+`$ sudo apt-get install libexpat1-dev`

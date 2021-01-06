@@ -20,8 +20,8 @@ void acquireImagesFixedRate(int rate, ImageRetriever *imageRetriever){
     imageRetriever->startAcquisition();
 
     while (!stopFlag){
-        cout << "aquiring........." << endl;
-        auto triggerCameraOnceFuture(async(launch::async, &ImageRetriever::triggerCameraOnce, imageRetriever));
+        cout << "acquiring........." << endl;
+        auto triggerCameraOnceFuture(async(launch::async, &ImageRetriever::acquireImage, imageRetriever));
         if (stopFlag){
             break;
         }
@@ -30,7 +30,7 @@ void acquireImagesFixedRate(int rate, ImageRetriever *imageRetriever){
         cout << endl;
     }
 
-    imageRetriever -> stopAcquisition();
+    imageRetriever->stopAcquisition();
 }
 
 // Reads Telemetry data from socket, exits on error from telemetry.
@@ -71,6 +71,16 @@ void tagImages(ImageTag *imageTag){
     }
 }
 
+// In milliseconds
+void sleepWrapper(int milliseconds)
+{
+#if defined WIN32 || defined _WIN32 || defined WIN64 || defined _WIN64
+    Sleep(milliseconds);
+#else
+    usleep(1000 * milliseconds);
+#endif
+}
+
 
 int main() {
 
@@ -79,33 +89,26 @@ int main() {
         ImageTag imageTag;
 
         FlirCamera flirCamera;
-        flirCamera.setTrigger(TriggerType::SOFTWARE);
-
-        cout << "Cameras Connected: " << flirCamera.getNumCameras() << endl;
-        ImageRetriever imageRetriever(flirCamera.getCamera(), &imageTag);
-        imageRetriever.setTriggerMode(TriggerMode::SINGLE_FRAME);
+        flirCamera.setDefaultSettings();
+        
+        ImageRetriever imageRetriever(&imageTag, CameraType::FLIR, &flirCamera);
 
         Telemetry telemetry(ADDRESS,PORT, &imageTag);
         telemetry.connectServer();
 
-
         auto acquireImagesFixedRateFuture(async(launch::async, acquireImagesFixedRate, RATE, &imageRetriever));
-
         auto readFromSocketFuture(async(launch::async, readFromSocket, &telemetry));
-
         auto processNextImageFuture(async(launch::async, tagImages, &imageTag));
 
-        sleep(50);
+        sleepWrapper(50000);
         stopFlag = true;
 
         acquireImagesFixedRateFuture.get();
 
         imageRetriever.releaseCamera();
-
-        flirCamera.cleanExit();
     }
     catch (const Exception& e){
-        cout << "Error in Main:  ";
+        cout << "Error in main:  ";
         cout << e.what() << endl;
     }
 }

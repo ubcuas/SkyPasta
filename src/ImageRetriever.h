@@ -1,6 +1,3 @@
-//
-// Created by Jonathan Hirsch on 2/17/20.
-//
 #include "FlirCamera.h"
 #include "ImageTag.h"
 #include <map>
@@ -11,45 +8,40 @@
 #ifndef SKYPASTA_CONTINUOUSACQUISITION_H
 #define SKYPASTA_CONTINUOUSACQUISITION_H
 
-enum class TriggerMode{
-    CONTINUOUS,
-    SINGLE_FRAME
+enum class CameraType{
+    FLIR
 };
 
-class ImageRetriever {
+class ImageRetriever
+{
 public:
-    ImageRetriever(const CameraPtr& cameraPtr, ImageTag *imageTag);
+    ImageRetriever(ImageTag *imageTag, CameraType cameraType, FlirCamera *flirCamera);
+    void releaseCamera();
 
     void startAcquisition();
     void stopAcquisition();
-    void releaseCamera(){cameraPtr = nullptr;};
-    void triggerCameraOnce();
-    void setTriggerMode(const TriggerMode triggerMode);
+    void acquireImage();
+    
+    void setAcquisitionMode(AcquisitionMode AcquisitionMode);
+    void setTriggerSource(TriggerSourceEnums triggerSourceToSet);
+    void setTriggerMode(TriggerModeEnums triggerModeToSet);
 
-    void setContinuousRate(const int continuousRate){ this -> continuousRate = continuousRate;};
-    int getContinuousRate()const {return continuousRate;}
-    bool isRunning()const {return running;};
+    bool isCameraBusy()const {return isCameraBusy;};
 
 private:
     void configureImageRetriever();
-    void acquireImagesContinuous(INodeMap& nodeMap);
-    void triggerImageRetrieval(INodeMap& nodeMap);
-    void acquireImage(INodeMap& nodeMap);
+    void acquireImageContinuous();
+    void getImage(const string image, const long timestamp);
+    bool waitForCameraAvailability(const char* func);
+    void sleepWrapper(int milliseconds);
 
-    CameraPtr cameraPtr = nullptr;
-    ImageTag *imageTag;
-    TriggerMode currentTriggerMode = TriggerMode::CONTINUOUS;
-    std::map<TriggerMode, std::string> triggerModeMap;
+    FlirCamera *flirCamera = nullptr;
+    ImageTag *imageTag = nullptr;
+    CameraType cameraType;
 
     double totalTime = 0;
     int imageNumber = 0;
-    int continuousRate = 1;
-    bool running = false;
-    bool stopFlag = false;
-    bool singleFrameModeEnabled = true;
+    bool isCameraBusy = false;
 };
 
-
-
 #endif
-

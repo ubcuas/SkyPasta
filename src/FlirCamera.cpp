@@ -31,7 +31,7 @@ FlirCamera::FlirCamera()
  * Parameters:
  * - retryCountMax: total amount of retries to find a camera
  */
-bool FlirCamera::initialize(int retryCountMax = 60)
+bool FlirCamera::initialize(int retryCountMax)
 {
     if(system == nullptr)
     {
@@ -75,7 +75,7 @@ bool FlirCamera::initialize(int retryCountMax = 60)
  * Attemps clean exit by releasing all resources and clearing references to pointers.
  * Clean exit will fail if an object holds a reference to a pointer when called, exit code 11 will be thrown.
  */
-void FlirCamera::cleanExit()
+int FlirCamera::cleanExit()
 {
     cout << "Attempting clean exit..." << endl;
     status = false;
@@ -97,6 +97,7 @@ void FlirCamera::cleanExit()
 
     cout << "Successfully performed a Clean Exit!" << endl;
     cout << "exit code 11 suggests improper ptr usage. Will not be caught by clean exit" << endl;
+    return 0;
 }
 
 /*
@@ -114,7 +115,7 @@ void FlirCamera::setTriggerSource(TriggerSourceEnums triggerSourceToSet)
 
     // Select trigger source
     // The trigger source must be set to hardware or software while trigger mode is off.
-
+    INodeMap &nodeMap = cameraPtr->GetNodeMap();
     CEnumerationPtr ptrTriggerSource = nodeMap.GetNode("TriggerSource");
 
     ptrTriggerSource->SetIntValue(triggerSourceToSet);
@@ -175,7 +176,7 @@ bool FlirCamera::selectUserSet(int userSet)
             return false;
         }
 
-        CEnumEntryPtr ptrUserSet = ptrUserSetSelector->GetEntryByName("UserSet" + to_string(userSet));
+        CEnumEntryPtr ptrUserSet = ptrUserSetSelector->GetEntryByName(("UserSet" + to_string(userSet)).c_str());
         if (!IsReadable(ptrUserSet))
         {
             cout << "Unable to set User Set Selector to User Set " + to_string(userSet) + " (enum entry retrieval). Aborting..." << endl;
@@ -285,7 +286,7 @@ bool FlirCamera::loadUserSet(int userSet)
  * Parameters:
  * - resetSettings: If set to true, User Set 1 is overwritten by User Set 0.
  */
-void FlirCamera::resetCamera(bool resetSettings = false)
+void FlirCamera::resetCamera(bool resetSettings)
 {
     try
     {
@@ -297,7 +298,7 @@ void FlirCamera::resetCamera(bool resetSettings = false)
 
         INodeMap &nodeMap = cameraPtr->GetNodeMap();
         CCommandPtr ptrDeviceReset = nodeMap.GetNode("DeviceReset");
-        ptrDeviceReset->execute();
+        ptrDeviceReset->Execute();
         cleanExit();
         if(!initialize())
         {
@@ -336,6 +337,7 @@ void FlirCamera::setAcquisitionMode(AcquisitionModeEnums selectedMode)
     try
     {   
         // Get AcquisitionMode node
+        INodeMap &nodeMap = cameraPtr->GetNodeMap();
         CEnumerationPtr ptrAcquisitionMode = nodeMap.GetNode("AcquisitionMode");
         ptrAcquisitionMode->SetIntValue(selectedMode);
         cout << "Acquisition mode set to " << AcquisitionModeMap[selectedMode] << "..." << endl;
@@ -382,10 +384,10 @@ void FlirCamera::startCapture()
         using namespace std::chrono;
         cameraPtr->TimestampLatch.Execute();
         milliseconds triggerTime_ms = duration_cast< milliseconds >(system_clock::now().time_since_epoch());
-        
-        //TimestampLatchValue return in ticks and TimestampIncrement in nanosecond per tick
-        int timestampLatch_ms = cameraPtr->TimestampLatchValue.GetValue() * cameraPtr->TimestampIncrement.GetValue() / 1000; 
-        cameraTimestampEpochOffset_ms = triggerTime_ms - timestampLatch_ms;
+
+        //TimestampLatchValue return in ticks and GevTimestampTickFrequency in seconds
+        int timestampLatch_ms = (double) cameraPtr->TimestampLatchValue.GetValue() / cameraPtr->GevTimestampTickFrequency.GetValue() / 1000; 
+        cameraTimestampEpochOffset_ms = triggerTime_ms.count() - timestampLatch_ms;
     }
     catch (Spinnaker::Exception& e)
     {
@@ -429,6 +431,7 @@ bool FlirCamera::getImage(ImagePtr *imagePtr, int *timestamp)
     try
     {
     //Before getting the image, we have to check if we need to trigger the camera.
+    INodeMap &nodeMap = cameraPtr->GetNodeMap();
     CEnumerationPtr ptrAcquisitionMode = nodeMap.GetNode("AcquisitionMode");
     CEnumEntryPtr acquisitionMode = ptrAcquisitionMode->GetCurrentEntry();
 
@@ -468,9 +471,7 @@ bool FlirCamera::getImage(ImagePtr *imagePtr, int *timestamp)
  * - imagePtr: Image pointer to be filled by the function
  * - timestamp: Image timestamp in epoch to be filled by the function
  */
-void FlirCamera::setDefaultSettings(AcquisitionModeEnums acqMode = AcquisitionMode_SingleFrame,
-    TriggerSourceEnums trigSrc = TriggerSource_Software,
-    TriggerModeEnums trigMode = TransferTriggerMode_On)
+void FlirCamera::setDefaultSettings(AcquisitionModeEnums acqMode, TriggerSourceEnums trigSrc, TriggerModeEnums trigMode)
 {
     setAcquisitionMode(acqMode);
     setTriggerSource(trigSrc);

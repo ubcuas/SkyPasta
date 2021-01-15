@@ -1,7 +1,6 @@
 #include <iostream>
 #include <unistd.h>
 #include <future>
-#include "FlirCamera.h"
 #include "ImageRetriever.h"
 #include "SpinGenApi/SpinnakerGenApi.h"
 #include "Telemetry.h"

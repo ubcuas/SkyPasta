@@ -5,6 +5,12 @@
 #include <iomanip>
 #include <sys/stat.h>
 
+#pragma once
+
+using namespace Spinnaker;
+using namespace Spinnaker::GenApi;
+using namespace Spinnaker::GenICam;
+
 #ifndef SKYPASTA_CONTINUOUSACQUISITION_H
 #define SKYPASTA_CONTINUOUSACQUISITION_H
 
@@ -22,16 +28,14 @@ public:
     void stopAcquisition();
     void acquireImage();
     
-    void setAcquisitionMode(AcquisitionMode AcquisitionMode);
+    void setAcquisitionMode(AcquisitionModeEnums AcquisitionMode);
     void setTriggerSource(TriggerSourceEnums triggerSourceToSet);
     void setTriggerMode(TriggerModeEnums triggerModeToSet);
 
-    bool isCameraBusy()const {return isCameraBusy;};
+    bool getIsCameraBusy()const {return isCameraBusy;};
 
 private:
-    void configureImageRetriever();
-    void acquireImageContinuous();
-    void getImage(const string image, const long timestamp);
+    void getImage(std::string &imageName, long * timestamp);
     bool waitForCameraAvailability(const char* func);
     void sleepWrapper(int milliseconds);
 

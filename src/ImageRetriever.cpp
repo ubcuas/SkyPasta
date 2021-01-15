@@ -20,7 +20,7 @@ ImageRetriever::ImageRetriever(ImageTag *imageTag, CameraType cameraType, FlirCa
     fclose(tempFile);
     remove("../Images/test.txt");
 
-    if(cameraType = CameraType::FLIR)
+    if(cameraType == CameraType::FLIR)
     {
         if (flirCamera == nullptr)
         {
@@ -31,9 +31,6 @@ ImageRetriever::ImageRetriever(ImageTag *imageTag, CameraType cameraType, FlirCa
         {
             cout << "Camera not initialized" << endl;
             return;
-        } else
-        {
-            configureImageRetriever();
         }
     }
 }
@@ -47,11 +44,11 @@ void ImageRetriever::setAcquisitionMode(AcquisitionModeEnums acquisitionModeToSe
     }
     isCameraBusy = true;
 
-    if(cameraType = CameraType::FLIR)
+    if(cameraType == CameraType::FLIR)
     {
         try
         {
-            flirCamera->setAcquisitionMode(acquisitionModeToSet)
+            flirCamera->setAcquisitionMode(acquisitionModeToSet);
         }
         catch (Spinnaker::Exception& e)
         {
@@ -71,11 +68,11 @@ void ImageRetriever::setTriggerSource(TriggerSourceEnums triggerSourceToSet)
     }
     isCameraBusy = true;
 
-    if(cameraType = CameraType::FLIR)
+    if(cameraType == CameraType::FLIR)
     {
         try
         {
-            flirCamera->setTriggerSource(triggerSourceToSet)
+            flirCamera->setTriggerSource(triggerSourceToSet);
         }
         catch (Spinnaker::Exception& e)
         {
@@ -95,11 +92,11 @@ void ImageRetriever::setTriggerMode(TriggerModeEnums triggerModeToSet)
     }
     isCameraBusy = true;
 
-    if(cameraType = CameraType::FLIR)
+    if(cameraType == CameraType::FLIR)
     {
         try
         {
-            flirCamera->setTriggerMode(triggerModeToSet)
+            flirCamera->setTriggerMode(triggerModeToSet);
         }
         catch (Spinnaker::Exception& e)
         {
@@ -126,7 +123,7 @@ void ImageRetriever::startAcquisition()
 
     cout << "Begin Acquisition..." << endl;
 
-    if(cameraType = CameraType::FLIR)
+    if(cameraType == CameraType::FLIR)
     {
         try
         {
@@ -151,7 +148,7 @@ void ImageRetriever::stopAcquisition() {
     isCameraBusy = true;
 
     cout << "Stopping..." << endl;
-    if(cameraType = CameraType::FLIR)
+    if(cameraType == CameraType::FLIR)
     {
         flirCamera->stopCapture();
     }
@@ -162,7 +159,7 @@ void ImageRetriever::stopAcquisition() {
 }
 
 // Acquires a single image and saves it to disk
-void ImageRetriever::getImage(string imageName, long * timestamp)
+void ImageRetriever::getImage(string &imageName, long * timestamp)
 {
     if(!waitForCameraAvailability(__FUNCTION__))
     {
@@ -170,13 +167,13 @@ void ImageRetriever::getImage(string imageName, long * timestamp)
     }
     isCameraBusy = true;
 
-    if(cameraType = CameraType::FLIR)
+    if(cameraType == CameraType::FLIR)
     {
         ImagePtr imagePtr;
         int image_timestamp_epoch;
         try
         {
-            flircamera->getImage(&imagePtr, &image_timestamp_epoch)
+            flirCamera->getImage(&imagePtr, &image_timestamp_epoch);
         }
         catch (Spinnaker::Exception& e)
         {
@@ -194,7 +191,7 @@ void ImageRetriever::getImage(string imageName, long * timestamp)
         imagePtr->Release();
 
         imageName = filename.str();
-        timestamp = image_timestamp_epoch;
+        *timestamp = image_timestamp_epoch;
     }
 
     isCameraBusy = false;
@@ -246,7 +243,7 @@ void ImageRetriever::releaseCamera()
     }
     isCameraBusy = true;
     
-    if(cameraType = CameraType::FLIR)
+    if(cameraType == CameraType::FLIR)
     {
         flirCamera->cleanExit();   
     }

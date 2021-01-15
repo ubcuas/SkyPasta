@@ -10,11 +10,6 @@ using namespace Spinnaker;
 using namespace Spinnaker::GenApi;
 using namespace Spinnaker::GenICam;
 
-// Dictonaries to help with debug messages
-std::map<AcquisitionModeEnums, std::string> AcquisitionModeMap;
-std::map<TriggerSourceEnums, std::string> TriggerSourceMap;
-std::map<TriggerModeEnums, std::string> TriggerModeMap;
-
 /*
  * Currently this class works only if there is one object of this class in memory.
  * If we are going to go through we this, we might want to make this into a singleton class.
@@ -43,7 +38,7 @@ public:
     // Camera setting setting
     void setDefaultSettings(AcquisitionModeEnums acqMode = AcquisitionMode_SingleFrame,
         TriggerSourceEnums trigSrc = TriggerSource_Software,
-        TriggerModeEnums trigMode = TransferTriggerMode_On);
+        TriggerModeEnums trigMode = TriggerMode_On);
     void setAcquisitionMode(AcquisitionModeEnums selectedMode);
     void setTriggerSource(TriggerSourceEnums triggerSourceToSet);
     void setTriggerMode(TriggerModeEnums triggerModeToSet);
@@ -54,7 +49,7 @@ public:
     bool getImage(ImagePtr *imagePtr, int *timestamp);
 
 private:
-    void initialize(int retryCountMax = 0);
+    bool initialize(int retryCountMax = 0);
     bool selectUserSet(int userSet);
     void sleepWrapper(int milliseconds);
 
@@ -75,5 +70,11 @@ private:
 
     // Whether or not the camera is connected
     bool status = false;
+
+    // Dictonaries to help with debug messages
+    std::map<AcquisitionModeEnums, std::string> AcquisitionModeMap;
+    std::map<TriggerSourceEnums, std::string> TriggerSourceMap;
+    std::map<TriggerModeEnums, std::string> TriggerModeMap;
+
 };
 #endif //FLIR_FLIRCAMERA_H

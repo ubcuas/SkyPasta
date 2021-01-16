@@ -111,6 +111,8 @@ void ImageRetriever::setTriggerMode(TriggerModeEnums triggerModeToSet)
 void ImageRetriever::startAcquisition()
 {
 
+    acquistionStartTime = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch()).count();
+
     //INodeMap &nodeMap = cameraPtr->GetNodeMap();
     if(!waitForCameraAvailability(__FUNCTION__))
     {
@@ -183,9 +185,8 @@ void ImageRetriever::getImage(string &imageName, long * timestamp)
         }
         ImagePtr convertedImage = imagePtr->Convert(PixelFormat_BayerRG8, HQ_LINEAR);
 
-        // SKYPASTA ISSUE 12
         ostringstream filename;
-        filename << "../Images/Trigger-" << imageNumber++ << ".jpg";
+        filename << "../Images/" << acquistionStartTime << "-" << imageNumber++ << ".jpg";
         convertedImage->Save(filename.str().c_str());
         cout << "Image saved at " << filename.str() << endl;
         imagePtr->Release();

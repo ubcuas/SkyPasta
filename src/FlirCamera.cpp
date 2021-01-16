@@ -391,7 +391,7 @@ void FlirCamera::startCapture()
     }
     catch (Spinnaker::Exception& e)
     {
-        cout << "Error while getting a refernce time for images: " << e.what() << endl;
+        cout << "Error while getting a reference time for images: " << e.what() << endl;
         throw e;
     }
 }
@@ -477,5 +477,5 @@ void FlirCamera::setDefaultSettings(AcquisitionModeEnums acqMode, TriggerSourceE
     setTriggerSource(trigSrc);
     setTriggerMode(trigMode);
 
-    saveUserSet(1); 
+    saveUserSet(1);
 }

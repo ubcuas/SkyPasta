@@ -46,6 +46,7 @@ private:
     double totalTime = 0;
     int imageNumber = 0;
     bool isCameraBusy = false;
+    int acquistionStartTime = 0;
 };
 
 #endif

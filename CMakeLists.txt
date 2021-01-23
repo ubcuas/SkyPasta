@@ -31,10 +31,11 @@ option( EXIV2_BUILD_EXIV2_COMMAND "" OFF )
 add_subdirectory( ${exiv2cmake_SOURCE_DIR} ${exiv2cmake_BINARY_DIR} )
 
 # Spinnaker dependency
-find_library( SPINNAKER_LIB "Spinnaker" HINTS "/opt/spinnaker/lib" )
+find_library( SPINNAKER_LIB "Spinnaker" HINTS "/opt/spinnaker/lib" "/usr/lib" )
 if( NOT SPINNAKER_LIB )
   message( FATAL_ERROR "You need to install the spinnaker library first: https://www.flir.ca/products/spinnaker-sdk/" )
 endif()
+set( SPINNAKER_LIB_INCLUDES "/opt/spinnaker/include" "/usr/include/spinnaker" )
 
 add_executable( skypasta
   ${CMAKE_SOURCE_DIR}/src/main.cpp
@@ -45,6 +46,6 @@ add_executable( skypasta
   ${CMAKE_SOURCE_DIR}/src/ImageTag.cpp
 )
 
-target_include_directories( skypasta SYSTEM PUBLIC /opt/spinnaker/include ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}/include )
+target_include_directories( skypasta SYSTEM PUBLIC ${SPINNAKER_LIB_INCLUDES} ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}/include )
 target_link_libraries( skypasta PUBLIC ${SPINNAKER_LIB} exiv2lib pthread )
 target_compile_options( skypasta PUBLIC "-Wall" "-Wextra" )

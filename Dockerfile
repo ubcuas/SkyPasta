@@ -1,13 +1,37 @@
 #### Libuuas dependency image ####
 FROM ubcuas/cppuuas AS libuuasdep
 
+
+#### Cmake dependency image ####
+FROM ubuntu:16.04 AS cmakedep
+
+RUN mkdir -p /cmakebuild
+WORKDIR /cmakebuild
+
+RUN apt-get update -y && apt-get install -y build-essential wget libssl-dev
+
+ARG CMAKE_VERSION=3.18.2
+RUN wget https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}.tar.gz
+RUN tar -xzf cmake-${CMAKE_VERSION}.tar.gz
+
+WORKDIR /cmakebuild/cmake-${CMAKE_VERSION}
+RUN ./bootstrap
+RUN make -j4
+
+
 #### Skypasta build image ####
-FROM ubuntu:20.04 AS builder
+FROM ubuntu:16.04 AS builder
+
+RUN apt-get update -y && apt-get install -y build-essential libssl-dev
+ARG CMAKE_VERSION=3.18.2
+RUN mkdir -p /cmakebuild/cmake-${CMAKE_VERSION}
+WORKDIR /cmakebuild/cmake-${CMAKE_VERSION}
+COPY --from=cmakedep /cmakebuild/cmake-${CMAKE_VERSION}/ ./
+RUN make install
+WORKDIR /
 
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update -y && apt-get install -y \
-	build-essential \
-	cmake \
 	iputils-ping \
 	lsb-release \
 	sudo \
@@ -16,16 +40,9 @@ RUN apt-get update -y && apt-get install -y \
 	libexpat1-dev \
 	libwebp-dev
 RUN apt-get update -y && apt-get install -y \
-	libavcodec58 \
-	libavformat58 \
-	libavutil56 \
-	libdouble-conversion3 \
 	libpcre2-16-0 \
-	libswresample3 \
-	libswscale5 \
 	libusb-1.0-0 \
-	libxcb-xinerama0 \
-	libxcb-xinput0
+	libxcb-xinerama0
 
 # Hack to get logname to work
 RUN rm -rf /usr/bin/logname
@@ -34,9 +51,9 @@ COPY tools/fakelogname.sh /usr/bin/logname
 COPY --from=libuuasdep /usr/local/lib/ /usr/local/lib/
 COPY --from=libuuasdep /usr/local/include/ /usr/local/include/
 
-COPY spinnaker-rehost/spinnaker-2.2.0.48-Ubuntu20.04-amd64-pkg.tar.gz ./
-RUN tar -xvf ./spinnaker-2.2.0.48-Ubuntu20.04-amd64-pkg.tar.gz
-WORKDIR ./spinnaker-2.2.0.48-amd64
+COPY spinnaker-rehost/spinnaker-2.0.0.147-Ubuntu16.04-amd64-pkg.tar.gz ./
+RUN tar -xvf ./spinnaker-2.0.0.147-Ubuntu16.04-amd64-pkg.tar.gz
+WORKDIR ./spinnaker-2.0.0.147-amd64
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 RUN echo 'debconf libspinnaker/accepted-flir-eula select true' | debconf-set-selections
 RUN bash -c " \
@@ -53,8 +70,7 @@ RUN bash -c " \
 	dpkg -i spinupdate_*.deb && \
 	dpkg -i spinupdate-dev_*.deb && \
 	dpkg -i spinnaker_*.deb && \
-	dpkg -i spinnaker-doc_*.deb && \
-	dpkg -i libgentl_*.deb \
+	dpkg -i spinnaker-doc_*.deb \
 "
 # TODO: This only install the build dependencies, to actually have it work inside here more needs to be done to use the official install script
 

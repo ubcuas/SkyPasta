@@ -51,7 +51,7 @@ For more information, refer to the `README.txt` inside of `spinnaker-2.2.0.48-am
 **With Docker**: in the root of `skypasta` run
 
 ```bash
-docker build .
+docker build . -t ubcuas/skypasta
 ```
 
 **Without Docker**: in the root of `skypasta`, run
@@ -69,7 +69,14 @@ Nothing here yet.
 
 ## Usage
 
-Go inside `skypasta/build` (if you do not have the `build` directory, make sure you have followed all steps in [Setup](#Setup)).
+**With Docker**: 
+
+```bash
+docker run --device <camera_device>:<camera_device> ubcuas/skypasta
+```
+Where `<camera_device>` is the port your camera is running on.
+
+**Without Docker**: Go inside `skypasta/build` (if you do not have the `build` directory, make sure you have followed all steps in [Setup](#Setup)).
 
 Run:
 

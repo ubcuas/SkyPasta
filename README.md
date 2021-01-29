@@ -74,7 +74,7 @@ Nothing here yet.
 ```bash
 docker run --device <camera_device>:<camera_device> ubcuas/skypasta
 ```
-Where `<camera_device>` is the port your camera is running on.
+Where `<camera_device>` is the location path of your camera connected to your device.
 
 **Without Docker**: Go inside `skypasta/build` (if you do not have the `build` directory, make sure you have followed all steps in [Setup](#Setup)).
 

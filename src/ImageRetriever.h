@@ -28,9 +28,10 @@ public:
     void stopAcquisition();
     void acquireImage();
     
-    void setAcquisitionMode(AcquisitionModeEnums AcquisitionMode);
-    void setTriggerSource(TriggerSourceEnums triggerSourceToSet);
-    void setTriggerMode(TriggerModeEnums triggerModeToSet);
+    void setAcquisitionMode(std::string AcquisitionMode);
+    void setTriggerType(std::string triggerSourceToSet);
+    void setTriggerSource(std::string triggerSourceToSet);
+    void setTriggerMode(std::string triggerModeToSet);
 
     bool getIsCameraBusy()const {return isCameraBusy;};
 

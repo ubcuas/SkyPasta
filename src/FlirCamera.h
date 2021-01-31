@@ -23,6 +23,7 @@ class FlirCamera
 {
 public:
     FlirCamera();
+    bool initialize(int retryCountMax = 5);
     void resetCamera(bool resetSettings = false);
     int cleanExit();
 
@@ -32,16 +33,18 @@ public:
     bool getStatus() {return this->status;}
 
     // User set (setting saving/loading)
-    bool saveUserSet(int userSet);
-    bool loadUserSet(int userSet);
+    bool saveUserSet(std::string userSet);
+    bool loadUserSet(std::string userSet);
 
     // Camera setting setting
-    void setDefaultSettings(AcquisitionModeEnums acqMode = AcquisitionMode_SingleFrame,
-        TriggerSourceEnums trigSrc = TriggerSource_Software,
-        TriggerModeEnums trigMode = TriggerMode_On);
-    void setAcquisitionMode(AcquisitionModeEnums selectedMode);
-    void setTriggerSource(TriggerSourceEnums triggerSourceToSet);
-    void setTriggerMode(TriggerModeEnums triggerModeToSet);
+    void setDefaultSettings(std::string acqMode = "Continous",
+        std::string triggerType = "FrameStart",
+        std::string trigSrc = "Software",
+        std::string trigMode = "On");
+    void setAcquisitionMode(std::string selectedMode);
+    void setTriggerType(std::string triggerTypeToSet);
+    void setTriggerSource(std::string triggerSourceToSet);
+    void setTriggerMode(std::string triggerModeToSet);
 
     // Image Capture
     void startCapture();
@@ -49,12 +52,12 @@ public:
     bool getImage(ImagePtr *imagePtr, int *timestamp);
 
 private:
-    bool initialize(int retryCountMax = 0);
-    bool selectUserSet(int userSet);
+    void findEpochOffset();
+    bool selectUserSet(std::string userSet);
     void sleepWrapper(int milliseconds);
 
     // The system pointer that we grab the camera list from
-    SystemPtr system = nullptr;
+    SystemPtr system;
 
     // The list of cameras attached to the system
     CameraList cameraList;
@@ -70,11 +73,5 @@ private:
 
     // Whether or not the camera is connected
     bool status = false;
-
-    // Dictonaries to help with debug messages
-    std::map<AcquisitionModeEnums, std::string> AcquisitionModeMap;
-    std::map<TriggerSourceEnums, std::string> TriggerSourceMap;
-    std::map<TriggerModeEnums, std::string> TriggerModeMap;
-
 };
 #endif //FLIR_FLIRCAMERA_H

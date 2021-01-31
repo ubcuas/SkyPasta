@@ -34,7 +34,6 @@ void acquireImagesFixedRate(int rate, ImageRetriever *imageRetriever){
 
 // Reads Telemetry data from socket, exits on error from telemetry.
 void readFromSocket(Telemetry *telemetry){
-    int exitCode = 0;
     int reconnectAttempts = 0;
 //    if (!telemetry->isConnected()){
 //        cout << "Telemetry error: Not connected" << endl;
@@ -84,20 +83,29 @@ void sleepWrapper(int milliseconds)
 int main() {
 
     try {
+        cout << "SkyPasta is booting up..." << endl;
 
         ImageTag imageTag;
 
+        cout << "Camera setup starting" << endl;
         FlirCamera flirCamera;
         flirCamera.setDefaultSettings();
-        
-        ImageRetriever imageRetriever(&imageTag, CameraType::FLIR, &flirCamera);
+        cout << "Camera setup complete" << endl;
 
+        cout << "ImageRetriever setup starting" << endl;
+        ImageRetriever imageRetriever(&imageTag, CameraType::FLIR, &flirCamera);
+        cout << "ImageRetriever setup complete" << endl;
+
+        cout << "Telemetry setup starting" << endl;
         Telemetry telemetry(ADDRESS,PORT, &imageTag);
         telemetry.connectServer();
+        cout << "Telemetry setup complete" << endl;
 
         auto acquireImagesFixedRateFuture(async(launch::async, acquireImagesFixedRate, RATE, &imageRetriever));
         auto readFromSocketFuture(async(launch::async, readFromSocket, &telemetry));
         auto processNextImageFuture(async(launch::async, tagImages, &imageTag));
+
+        cout << "Boot up complete..." << endl;
 
         sleepWrapper(50000);
         stopFlag = true;

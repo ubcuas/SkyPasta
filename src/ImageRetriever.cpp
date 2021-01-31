@@ -8,14 +8,13 @@ ImageRetriever::ImageRetriever(ImageTag *imageTag, CameraType cameraType, FlirCa
 {
     this->flirCamera = flirCamera;
     this->imageTag = imageTag;
+    this->cameraType = cameraType;
 
-    mkdir("../Images", 0);
+    mkdir("../Images", 0777); //Creating a directory with all the permissions
     FILE *tempFile = fopen("../Images/test.txt", "w+");
     if (tempFile == nullptr)
     {
-        cout << "Failed to create file in current folder.  Please check "
-                "permissions."
-             << endl;
+        cout << "Failed to create file in current folder. Please check permissions." << endl;
     }
     fclose(tempFile);
     remove("../Images/test.txt");
@@ -36,7 +35,7 @@ ImageRetriever::ImageRetriever(ImageTag *imageTag, CameraType cameraType, FlirCa
 }
 
 // Sets AcquisitionMode
-void ImageRetriever::setAcquisitionMode(AcquisitionModeEnums acquisitionModeToSet)
+void ImageRetriever::setAcquisitionMode(string acquisitionModeToSet)
 {
     if(!waitForCameraAvailability(__FUNCTION__))
     {
@@ -59,8 +58,32 @@ void ImageRetriever::setAcquisitionMode(AcquisitionModeEnums acquisitionModeToSe
     isCameraBusy = false;
 }
 
+// Sets TriggerType
+void ImageRetriever::setTriggerType(string triggerTypeToSet)
+{
+    if(!waitForCameraAvailability(__FUNCTION__))
+    {
+        throw std::runtime_error("Camera busy timeout");
+    }
+    isCameraBusy = true;
+
+    if(cameraType == CameraType::FLIR)
+    {
+        try
+        {
+            flirCamera->setTriggerType(triggerTypeToSet);
+        }
+        catch (Spinnaker::Exception& e)
+        {
+            isCameraBusy = false;
+            throw e;
+        }
+    }
+    isCameraBusy = false;
+}
+
 // Sets TriggerSource
-void ImageRetriever::setTriggerSource(TriggerSourceEnums triggerSourceToSet)
+void ImageRetriever::setTriggerSource(string triggerSourceToSet)
 {
     if(!waitForCameraAvailability(__FUNCTION__))
     {
@@ -84,7 +107,7 @@ void ImageRetriever::setTriggerSource(TriggerSourceEnums triggerSourceToSet)
 }
 
 // SetsTriggerMode
-void ImageRetriever::setTriggerMode(TriggerModeEnums triggerModeToSet)
+void ImageRetriever::setTriggerMode(string triggerModeToSet)
 {
     if(!waitForCameraAvailability(__FUNCTION__))
     {
@@ -183,7 +206,19 @@ void ImageRetriever::getImage(string &imageName, long * timestamp)
             cout << "Exception while getting image: " << e.what() << endl;
             throw e;
         }
-        ImagePtr convertedImage = imagePtr->Convert(PixelFormat_BayerRG8, HQ_LINEAR);
+
+        ImagePtr convertedImage;
+        try
+        {
+            convertedImage = imagePtr->Convert(PixelFormat_BGR8, HQ_LINEAR); // TODO grab pixel format from camera
+        }
+        catch (Spinnaker::Exception& e)
+        {
+            cout << "Error while converting image: " << e.what() << endl;
+            isCameraBusy = false;
+            imagePtr->Release();
+            throw e;
+        }
 
         ostringstream filename;
         filename << "../Images/" << acquistionStartTime << "-" << imageNumber++ << ".jpg";
@@ -199,7 +234,8 @@ void ImageRetriever::getImage(string &imageName, long * timestamp)
 }
 
 // Grabs an image, adds image location and timestamp_telem to ImageTag
-void ImageRetriever::acquireImage() {
+void ImageRetriever::acquireImage()
+{
     string image = "";
     long * timestamp;
     getImage(image, timestamp);

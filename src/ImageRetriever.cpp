@@ -1,195 +1,279 @@
-//
-// Created by Jonathan Hirsch on 2/17/20.
-//
-
 #include "ImageRetriever.h"
+#include <thread>
 
 using namespace std;
 
-ImageRetriever::ImageRetriever(const CameraPtr& cameraPtr, ImageTag *imageTag) {
-    this->cameraPtr = cameraPtr;
-    this->imageTag = imageTag;
-
-    triggerModeMap[TriggerMode::CONTINUOUS] = "Continuous";
-    triggerModeMap[TriggerMode::SINGLE_FRAME] = "SingleFrame";
-
-    if (cameraPtr == nullptr) {
-        cout << "No Camera devices attached to Image Retriever " << endl;
-        return;
-    }
-    if (!cameraPtr->IsInitialized()) {
-        cout << "camera not initialized" << endl;
-        return;
-    } else {
-        configureImageRetriever();
-    }
-}
-
-void ImageRetriever::setTriggerMode(TriggerMode triggerMode) {
-    this->currentTriggerMode = triggerMode;
-    configureImageRetriever();
-}
-
-void ImageRetriever::triggerCameraOnce() {
-    cameraPtr->BeginAcquisition();
-    if (singleFrameModeEnabled) {
-        acquireImage(cameraPtr->GetNodeMap());
-    }
-    cameraPtr->EndAcquisition();
-}
-
-// Configures trigger mode and insures images can be saved by saving a test file and deleting it
+// Initializes and ensures images can be saved by saving a test file and deleting it
 // Creates image directory if necessary
-void ImageRetriever::configureImageRetriever() {
+ImageRetriever::ImageRetriever(ImageTag *imageTag, CameraType cameraType, FlirCamera *flirCamera)
+{
+    this->flirCamera = flirCamera;
+    this->imageTag = imageTag;
+    this->cameraType = cameraType;
 
-    mkdir("../Images", 0);
+    mkdir("../Images", 0777); //Creating a directory with all the permissions
     FILE *tempFile = fopen("../Images/test.txt", "w+");
-    if (tempFile == nullptr) {
-        cout << "Failed to create file in current folder.  Please check "
-                "permissions."
-             << endl;
+    if (tempFile == nullptr)
+    {
+        cout << "Failed to create file in current folder. Please check permissions." << endl;
     }
     fclose(tempFile);
     remove("../Images/test.txt");
 
-    INodeMap &nodeMap = cameraPtr->GetNodeMap();
-
-    gcstring selectedMode;
-    const char *selectedModeArr = triggerModeMap.at(currentTriggerMode).c_str();
-    selectedMode.assign(selectedModeArr);
-
-
-    // Set acquisition mode to continuous
-    CEnumerationPtr ptrAcquisitionMode = nodeMap.GetNode("AcquisitionMode");
-    if (!IsAvailable(ptrAcquisitionMode) || !IsWritable(ptrAcquisitionMode)) {
-        cout << "Unable to set acquisition mode to continuous (node retrieval). Aborting..." << endl << endl;
-        return;
-    }
-
-    CEnumEntryPtr ptrAcquisitionModeSet = ptrAcquisitionMode->GetEntryByName(selectedMode);
-    if (!IsAvailable(ptrAcquisitionModeSet) || !IsReadable(ptrAcquisitionModeSet)) {
-        cout << "Unable to set acquisition mode to continuous (entry '" << selectedMode << "' retrieval). Aborting..."
-             << endl
-             << endl;
-        return;
-    }
-
-    int64_t acquisitionModeSet = ptrAcquisitionModeSet->GetValue();
-    ptrAcquisitionMode->SetIntValue(acquisitionModeSet);
-    cout << "Acquisition mode set to " << selectedMode << "..." << endl;
-}
-
-// Reset all flags and start acquisition if camera is not currently running
-void ImageRetriever::startAcquisition() {
-
-    INodeMap &nodeMap = cameraPtr->GetNodeMap();
-
-    if (!running) {
-        stopFlag = false;
-        running = true;
-        imageNumber = 0;
-        totalTime = 0;
-
-        if (cameraPtr == nullptr) {
+    if(cameraType == CameraType::FLIR)
+    {
+        if (flirCamera == nullptr)
+        {
             cout << "No Camera devices attached to Image Retriever " << endl;
             return;
         }
-
-        cout << "Begin Acquisition..." << endl;
-        switch (currentTriggerMode) {
-            case TriggerMode::SINGLE_FRAME: singleFrameModeEnabled = true; break;
-            case TriggerMode::CONTINUOUS: acquireImagesContinuous(nodeMap); break;
-            default: stopAcquisition();break;
+        if (!flirCamera->getCamera()->IsInitialized())
+        {
+            cout << "Camera not initialized" << endl;
+            return;
         }
-
-    } else {
-        cout << "Camera already acquiring images" << endl;
     }
 }
 
-void ImageRetriever::stopAcquisition() {
-    stopFlag = true;
-    cout << "Stopping..." << endl;
-    singleFrameModeEnabled = false;
-
-    if (cameraPtr->IsStreaming()) {
-        cameraPtr->EndAcquisition();
+// Sets AcquisitionMode
+void ImageRetriever::setAcquisitionMode(string acquisitionModeToSet)
+{
+    if(!waitForCameraAvailability(__FUNCTION__))
+    {
+        throw std::runtime_error("Camera busy timeout");
     }
+    isCameraBusy = true;
+
+    if(cameraType == CameraType::FLIR)
+    {
+        try
+        {
+            flirCamera->setAcquisitionMode(acquisitionModeToSet);
+        }
+        catch (Spinnaker::Exception& e)
+        {
+            isCameraBusy = false;
+            throw e;
+        }
+    }
+    isCameraBusy = false;
+}
+
+// Sets TriggerType
+void ImageRetriever::setTriggerType(string triggerTypeToSet)
+{
+    if(!waitForCameraAvailability(__FUNCTION__))
+    {
+        throw std::runtime_error("Camera busy timeout");
+    }
+    isCameraBusy = true;
+
+    if(cameraType == CameraType::FLIR)
+    {
+        try
+        {
+            flirCamera->setTriggerType(triggerTypeToSet);
+        }
+        catch (Spinnaker::Exception& e)
+        {
+            isCameraBusy = false;
+            throw e;
+        }
+    }
+    isCameraBusy = false;
+}
+
+// Sets TriggerSource
+void ImageRetriever::setTriggerSource(string triggerSourceToSet)
+{
+    if(!waitForCameraAvailability(__FUNCTION__))
+    {
+        throw std::runtime_error("Camera busy timeout");
+    }
+    isCameraBusy = true;
+
+    if(cameraType == CameraType::FLIR)
+    {
+        try
+        {
+            flirCamera->setTriggerSource(triggerSourceToSet);
+        }
+        catch (Spinnaker::Exception& e)
+        {
+            isCameraBusy = false;
+            throw e;
+        }
+    }
+    isCameraBusy = false;
+}
+
+// SetsTriggerMode
+void ImageRetriever::setTriggerMode(string triggerModeToSet)
+{
+    if(!waitForCameraAvailability(__FUNCTION__))
+    {
+        throw std::runtime_error("Camera busy timeout");
+    }
+    isCameraBusy = true;
+
+    if(cameraType == CameraType::FLIR)
+    {
+        try
+        {
+            flirCamera->setTriggerMode(triggerModeToSet);
+        }
+        catch (Spinnaker::Exception& e)
+        {
+            isCameraBusy = false;
+            throw e;
+        }
+    }
+    isCameraBusy = false;
+}
+
+// Reset image and time tracking and start acquisition
+void ImageRetriever::startAcquisition()
+{
+
+    acquistionStartTime = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch()).count();
+
+    //INodeMap &nodeMap = cameraPtr->GetNodeMap();
+    if(!waitForCameraAvailability(__FUNCTION__))
+    {
+        throw std::runtime_error("Camera busy timeout");
+    }
+
+    isCameraBusy = true;
+    imageNumber = 0;
+    totalTime = 0;
+
+    cout << "Begin Acquisition..." << endl;
+
+    if(cameraType == CameraType::FLIR)
+    {
+        try
+        {
+            flirCamera->startCapture();
+        }
+        catch (Spinnaker::Exception& e)
+        {
+            isCameraBusy = false;
+            throw e;
+        }
+    }
+
+    isCameraBusy = false;
+}
+
+// Stops acquisition of the camera
+void ImageRetriever::stopAcquisition() {
+    if(!waitForCameraAvailability(__FUNCTION__))
+    {
+        throw std::runtime_error("Camera busy timeout");
+    }
+    isCameraBusy = true;
+
+    cout << "Stopping..." << endl;
+    if(cameraType == CameraType::FLIR)
+    {
+        flirCamera->stopCapture();
+    }
+    isCameraBusy = false;
 
     cout << "Acquisition Stopped" << endl << endl;
     cout << "Number of images Acquired: " << imageNumber << endl;
-    cout << "Total Time Taken: " << totalTime << setprecision(6) << "sec" << endl;
-    double averageTime = totalTime / imageNumber;
-    cout << "Average time per image: " << averageTime << setprecision(6) << "sec" << endl << endl;
 }
 
-// acquires a single image
-// Converts Image to BayerRG8,
-// calculates image timestamp_telem and capture duration
-// adds image location & timestamp_telem to ImageTag
-void ImageRetriever::acquireImage(INodeMap &nodeMap) {
-    // start clock, acquire image, and stop clock
-    imageNumber++;
-    std::chrono::high_resolution_clock::time_point startTime = std::chrono::high_resolution_clock::now();
-    triggerImageRetrieval(nodeMap);
-    ImagePtr pResultImage = cameraPtr->GetNextImage();
-    std::chrono::high_resolution_clock::time_point endTime = std::chrono::high_resolution_clock::now();
+// Acquires a single image and saves it to disk
+void ImageRetriever::getImage(string &imageName, long * timestamp)
+{
+    if(!waitForCameraAvailability(__FUNCTION__))
+    {
+        throw std::runtime_error("Camera busy timeout");
+    }
+    isCameraBusy = true;
 
-    cout << "_____________________________" << endl;
-    cout << ":: Acquisition# " << imageNumber << endl;
-    if (pResultImage->IsIncomplete()) {
-        cout << "Image incomplete with image status " << pResultImage->GetImageStatus() << "..." << endl << endl;
-        pResultImage->Release();
+    if(cameraType == CameraType::FLIR)
+    {
+        ImagePtr imagePtr;
+        int image_timestamp_epoch;
+        try
+        {
+            flirCamera->getImage(&imagePtr, &image_timestamp_epoch);
+        }
+        catch (Spinnaker::Exception& e)
+        {
+            isCameraBusy = false;
+            cout << "Exception while getting image: " << e.what() << endl;
+            throw e;
+        }
 
-    } else { // Convert image
-        cout << "Grabbed image: W*H = " << pResultImage->GetWidth() << "*" << pResultImage->GetHeight() << endl;
+        ImagePtr convertedImage;
+        try
+        {
+            convertedImage = imagePtr->Convert(PixelFormat_BGR8, HQ_LINEAR); // TODO grab pixel format from camera
+        }
+        catch (Spinnaker::Exception& e)
+        {
+            cout << "Error while converting image: " << e.what() << endl;
+            isCameraBusy = false;
+            imagePtr->Release();
+            throw e;
+        }
 
-        ImagePtr convertedImage = pResultImage->Convert(PixelFormat_BayerRG8, HQ_LINEAR);
         ostringstream filename;
-        filename << "../Images/Trigger-" << imageNumber << ".jpg";
+        filename << "../Images/" << acquistionStartTime << "-" << imageNumber++ << ".jpg";
         convertedImage->Save(filename.str().c_str());
         cout << "Image saved at " << filename.str() << endl;
+        imagePtr->Release();
 
-        pResultImage->Release();
-
-        // calculate capture duration, save timestamp_telem and image location to imageTag
-        std::chrono::duration<double, std::milli> timeSpan = endTime - startTime;
-        long timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(
-                std::chrono::system_clock::now().time_since_epoch()).count();
-        cout << "time taken by program: " << timeSpan.count() << endl;
-        cout << "Timestamp:" << setprecision(20) << timestamp << endl;
-        totalTime += timeSpan.count();
-        imageTag->addImage(filename.str(), timestamp - timeSpan.count() / 2);
+        imageName = filename.str();
+        *timestamp = image_timestamp_epoch;
     }
+
+    isCameraBusy = false;
 }
 
-// Continuously acquire images, sleep a fixed time between each acquisition
-void ImageRetriever::acquireImagesContinuous(INodeMap &nodeMap) {
-    cameraPtr->BeginAcquisition();
-    while (true) {
-        if (stopFlag) {
-            cout << "exiting acquisition loop" << endl;
-            running = false;
-            stopFlag = false;
-            break;
+// Grabs an image, adds image location and timestamp_telem to ImageTag
+void ImageRetriever::acquireImage()
+{
+    string image = "";
+    long * timestamp;
+    getImage(image, timestamp);
+
+    imageTag->addImage(image, *timestamp);
+}
+
+// Waits for 20 * 100 milliseconds = 2,000 milliseconds = 2 seconds
+bool ImageRetriever::waitForCameraAvailability(const char* func)
+{
+    int count = 0;
+    while (isCameraBusy)
+    {
+        if(count == 20)
+        {
+            cout << func << " was called but the camera was busy. Aborting..." << endl;
+            return false;
         }
-        acquireImage(nodeMap);
-
-        cout << endl;
-        sleep(continuousRate);
+        cout << func << " is called but the camera is busy. Waiting..." << endl;
+        count++;
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
-    cameraPtr->EndAcquisition();
+    return true;
 }
 
-// Capture an image.
-// Uses Software Trigger
-// Camera must run BeginAcquisition() before running this method
-void ImageRetriever::triggerImageRetrieval(INodeMap &nodeMap) {
-    CCommandPtr ptrSoftwareTriggerCommand = nodeMap.GetNode("TriggerSoftware");
-    if (!IsAvailable(ptrSoftwareTriggerCommand) || !IsWritable(ptrSoftwareTriggerCommand)) {
-        cout << "Unable to execute trigger. Aborting..." << endl;
-        return;
+// Clean exit
+void ImageRetriever::releaseCamera()
+{
+    if(!waitForCameraAvailability(__FUNCTION__))
+    {
+        throw std::runtime_error("Camera busy timeout");
     }
-
-    ptrSoftwareTriggerCommand->Execute();
+    isCameraBusy = true;
+    
+    if(cameraType == CameraType::FLIR)
+    {
+        flirCamera->cleanExit();   
+    }
+    isCameraBusy = false;
 }

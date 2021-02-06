@@ -1,7 +1,6 @@
 #include <iostream>
 #include <unistd.h>
 #include <future>
-#include "FlirCamera.h"
 #include "ImageRetriever.h"
 #include "SpinGenApi/SpinnakerGenApi.h"
 #include "Telemetry.h"
@@ -20,8 +19,8 @@ void acquireImagesFixedRate(int rate, ImageRetriever *imageRetriever){
     imageRetriever->startAcquisition();
 
     while (!stopFlag){
-        cout << "aquiring........." << endl;
-        auto triggerCameraOnceFuture(async(launch::async, &ImageRetriever::triggerCameraOnce, imageRetriever));
+        cout << "Acquiring Image" << endl;
+        auto triggerCameraOnceFuture(async(launch::async, &ImageRetriever::acquireImage, imageRetriever));
         if (stopFlag){
             break;
         }
@@ -30,12 +29,11 @@ void acquireImagesFixedRate(int rate, ImageRetriever *imageRetriever){
         cout << endl;
     }
 
-    imageRetriever -> stopAcquisition();
+    imageRetriever->stopAcquisition();
 }
 
 // Reads Telemetry data from socket, exits on error from telemetry.
 void readFromSocket(Telemetry *telemetry){
-    int exitCode = 0;
     int reconnectAttempts = 0;
 //    if (!telemetry->isConnected()){
 //        cout << "Telemetry error: Not connected" << endl;
@@ -71,41 +69,46 @@ void tagImages(ImageTag *imageTag){
     }
 }
 
-
-int main() {
-
-    try {
+int main()
+{
+    try
+    {
+        cout << "SkyPasta is booting up..." << endl;
 
         ImageTag imageTag;
 
+        cout << "Camera setup starting" << endl;
         FlirCamera flirCamera;
-        flirCamera.setTrigger(TriggerType::SOFTWARE);
+        flirCamera.setDefaultSettings();
+        cout << "Camera setup complete" << endl;
 
-        cout << "Cameras Connected: " << flirCamera.getNumCameras() << endl;
-        ImageRetriever imageRetriever(flirCamera.getCamera(), &imageTag);
-        imageRetriever.setTriggerMode(TriggerMode::SINGLE_FRAME);
+        cout << "ImageRetriever setup starting" << endl;
+        ImageRetriever imageRetriever(&imageTag, CameraType::FLIR, &flirCamera);
+        cout << "ImageRetriever setup complete" << endl;
 
+        cout << "Telemetry setup starting" << endl;
         Telemetry telemetry(ADDRESS,PORT, &imageTag);
         telemetry.connectServer();
-
+        cout << "Telemetry setup complete" << endl;
 
         auto acquireImagesFixedRateFuture(async(launch::async, acquireImagesFixedRate, RATE, &imageRetriever));
-
         auto readFromSocketFuture(async(launch::async, readFromSocket, &telemetry));
-
         auto processNextImageFuture(async(launch::async, tagImages, &imageTag));
 
-        sleep(50);
-        stopFlag = true;
+        cout << "Boot up complete..." << endl;
+
+        while(!stopFlag)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        } 
 
         acquireImagesFixedRateFuture.get();
 
         imageRetriever.releaseCamera();
-
-        flirCamera.cleanExit();
     }
-    catch (const Exception& e){
-        cout << "Error in Main:  ";
+    catch (const Exception& e)
+    {
+        cout << "Error in main:  ";
         cout << e.what() << endl;
     }
 }

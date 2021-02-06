@@ -80,9 +80,10 @@ void sleepWrapper(int milliseconds)
 }
 
 
-int main() {
-
-    try {
+int main()
+{
+    try
+    {
         cout << "SkyPasta is booting up..." << endl;
 
         ImageTag imageTag;
@@ -114,7 +115,8 @@ int main() {
 
         imageRetriever.releaseCamera();
     }
-    catch (const Exception& e){
+    catch (const Exception& e)
+    {
         cout << "Error in main:  ";
         cout << e.what() << endl;
     }

@@ -38,7 +38,7 @@ public:
 
     // Camera setting setting
     void setDefaultSettings(std::string acqMode = "Continous",
-        std::string triggerType = "FrameStart",
+        std::string trigType = "FrameStart",
         std::string trigSrc = "Software",
         std::string trigMode = "On");
     void setAcquisitionMode(std::string selectedMode);

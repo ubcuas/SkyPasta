@@ -65,6 +65,10 @@ bool FlirCamera::initialize(int retryCountMax)
     }
 }
 
+/*
+ * Calcualtes the timestamp difference between the computer and the camera
+ * Returns void but modifies the cameraTimestampEpochOffset_ms variable
+ */
 void FlirCamera::findEpochOffset()
 {
     try
@@ -530,16 +534,17 @@ bool FlirCamera::getImage(ImagePtr *imagePtr, int *timestamp)
 }
 
 /*
- * Grabs an image and calculates its timestamp.
- * Returns operation success.
+ * Sets a lot of settings on the camera. If a parameter is not given, it sets the settings to predetermined values.
  * Parameters:
- * - imagePtr: Image pointer to be filled by the function
- * - timestamp: Image timestamp in epoch to be filled by the function
+ * - acqMode: Acquistion Mode to be set
+ * - trigType: Trigger Type to be set
+ * - trigSrc: Trigger Source to be set
+ * - trigMode: Trigger Mode to be set
  */
-void FlirCamera::setDefaultSettings(string acqMode, string triggerType, string trigSrc, string trigMode)
+void FlirCamera::setDefaultSettings(string acqMode, string trigType, string trigSrc, string trigMode)
 {
     setAcquisitionMode(acqMode);
-    setTriggerType(triggerType);
+    setTriggerType(trigType);
     setTriggerSource(trigSrc);
     setTriggerMode(trigMode);
 

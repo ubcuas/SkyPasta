@@ -2,6 +2,7 @@
 #include <ctime>
 #include <ratio>
 #include <chrono>
+#include <thread>
 
 using namespace std;
 
@@ -44,7 +45,7 @@ bool FlirCamera::initialize(int retryCountMax)
                 else
                 {
                     cout << "Sleeping for 1 second before re-trying." << endl;
-                    sleepWrapper(1000);
+                    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
                     continue;
                 }
             }
@@ -128,7 +129,7 @@ int FlirCamera::cleanExit()
 }
 
 /*
- * Sets the acquisition mode to the AcquisitionModeEnum passed.
+ * Sets the acquisition mode to the string passed that represents AcquisitionModeEnum.
  * Acquistion Mode is Continuous, SingleFrame or MultiFrame.
  * In Continuous mode, the camera takes pictures whenever it receives a trigger.
  * In SingleFrame mode, the camera takes a single picture when it receives a trigger.
@@ -191,7 +192,7 @@ void FlirCamera::setTriggerType(string triggerTypeToSet)
 }
 
 /*
- * Sets the trigger source to the TriggerSourceEnum passed.
+ * Sets the trigger source to the string passed that represents TriggerSourceEnum.
  * Trigger Sources are divded into two: software and hardware. We use Software trigger.
  * Trigger Mode to set to Off.
  * Parameters:
@@ -227,7 +228,7 @@ void FlirCamera::setTriggerSource(string triggerSourceToSet)
 }
 
 /*
- * Sets the trigger mode to the TriggerModeEnum passed.
+ * Sets the trigger mode to the string passed that represents TriggerModeEnum.
  * Trigger Mode is eighter On or Off.
  * Parameters:
  * - triggerModeToSet: Trigger mode that is attempted to be set.
@@ -335,7 +336,7 @@ bool FlirCamera::saveUserSet(string userSet)
         return false;
     }
 
-    sleepWrapper(300); // We have to sleep here while the camera gets the save and load nodes ready
+    std::this_thread::sleep_for(std::chrono::milliseconds(300)); // We have to sleep here while the camera gets the save and load nodes ready
 
     try
     {
@@ -374,7 +375,7 @@ bool FlirCamera::loadUserSet(string userSet)
         return false;
     }
 
-    sleepWrapper(300); // We have to sleep here while the camera gets the save and load nodes ready
+    std::this_thread::sleep_for(std::chrono::milliseconds(300)); // We have to sleep here while the camera gets the save and load nodes ready
 
     try
     {
@@ -428,16 +429,6 @@ void FlirCamera::resetCamera(bool resetSettings)
         cout << "Error while reseting the camera: " << e.what() << endl;
         throw e;
     }
-}
-
-// Sleep helper function (in milliseconds)
-void FlirCamera::sleepWrapper(int milliseconds)
-{
-#if defined WIN32 || defined _WIN32 || defined WIN64 || defined _WIN64
-    Sleep(milliseconds);
-#else
-    usleep(1000 * milliseconds);
-#endif
 }
 
 /*

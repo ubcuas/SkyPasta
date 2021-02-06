@@ -1,4 +1,5 @@
 #include "ImageRetriever.h"
+#include <thread>
 
 using namespace std;
 
@@ -256,19 +257,9 @@ bool ImageRetriever::waitForCameraAvailability(const char* func)
         }
         cout << func << " is called but the camera is busy. Waiting..." << endl;
         count++;
-        sleepWrapper(100);
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
     return true;
-}
-
-// In milliseconds
-void ImageRetriever::sleepWrapper(int milliseconds)
-{
-#if defined WIN32 || defined _WIN32 || defined WIN64 || defined _WIN64
-    Sleep(milliseconds);
-#else
-    usleep(1000 * milliseconds);
-#endif
 }
 
 // Clean exit

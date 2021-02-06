@@ -38,7 +38,6 @@ public:
 private:
     void getImage(std::string &imageName, long * timestamp);
     bool waitForCameraAvailability(const char* func);
-    void sleepWrapper(int milliseconds);
 
     FlirCamera *flirCamera = nullptr;
     ImageTag *imageTag = nullptr;

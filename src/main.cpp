@@ -19,7 +19,7 @@ void acquireImagesFixedRate(int rate, ImageRetriever *imageRetriever){
     imageRetriever->startAcquisition();
 
     while (!stopFlag){
-        cout << "acquiring........." << endl;
+        cout << "Acquiring Image" << endl;
         auto triggerCameraOnceFuture(async(launch::async, &ImageRetriever::acquireImage, imageRetriever));
         if (stopFlag){
             break;
@@ -69,17 +69,6 @@ void tagImages(ImageTag *imageTag){
     }
 }
 
-// In milliseconds
-void sleepWrapper(int milliseconds)
-{
-#if defined WIN32 || defined _WIN32 || defined WIN64 || defined _WIN64
-    Sleep(milliseconds);
-#else
-    usleep(1000 * milliseconds);
-#endif
-}
-
-
 int main()
 {
     try
@@ -108,8 +97,10 @@ int main()
 
         cout << "Boot up complete..." << endl;
 
-        sleepWrapper(50000);
-        stopFlag = true;
+        while(!stopFlag)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        } 
 
         acquireImagesFixedRateFuture.get();
 

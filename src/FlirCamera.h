@@ -54,7 +54,6 @@ public:
 private:
     void findEpochOffset();
     bool selectUserSet(std::string userSet);
-    void sleepWrapper(int milliseconds);
 
     // The system pointer that we grab the camera list from
     SystemPtr system;

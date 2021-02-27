@@ -3,26 +3,21 @@ list:
 	@$(MAKE) -pRrq -f $(lastword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/^# File/,/^# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | egrep -v -e '^[^[:alnum:]]' -e '^$@$$'
 
 ## Build ##
-build:
-	cargo build
-
-build-release:
-	cargo build --release
+build-cpp:
+	mkdir -p build/
+	cd build/; cmake ../src/; $(MAKE)
 
 ## Test ##
-test:
-	cargo test
-
-test-release:
-	cargo test --release
-
-## Cleanup ##
-clean:
-	cargo clean
+test-cpp: build-cpp
+	cd build; make test
 
 ## Install ##
-install:
-	cargo install
+install: build-cpp
+	cd build; make install
+
+## Cleanup ##
+clean :
+	-rm -rf build/
 
 ## Docker ##
 docker-multiarch-deps:
@@ -49,5 +44,4 @@ docker-multiarch-publish: docker-multiarch-deps
 
 ## CI ##
 ci-test:
-	docker build . --pull=true --target builder -t ubcuas/skypasta:test
-	docker run ubcuas/skypasta:test cargo test --release
+	echo "Test"

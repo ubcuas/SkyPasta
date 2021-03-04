@@ -10,6 +10,7 @@ constexpr int PORT = 5000;
 constexpr auto ADDRESS  = "127.0.0.1";
 constexpr int RATE = 2; // delay between each image acquisition trigger
 
+constexpr int SECONDS_TO_RUN = -1; // Set to -1 to run indefinitely
 
 using namespace std;
 
@@ -97,10 +98,15 @@ int main()
 
         cout << "Boot up complete..." << endl;
 
+        int count = 0;
         while(!stopFlag)
         {
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            if(count == SECONDS_TO_RUN) {stopFlag = true;} 
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000)); 
+            count++;
         } 
+
+        cout << "Stopping..." << endl;
 
         acquireImagesFixedRateFuture.get();
 

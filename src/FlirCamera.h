@@ -40,16 +40,21 @@ public:
     void setDefaultSettings(std::string acqMode = "Continous",
         std::string trigType = "FrameStart",
         std::string trigSrc = "Software",
-        std::string trigMode = "On");
+        std::string trigMode = "On",
+        std::string pixFormat = "BayerRG8");
+        // Ideally we would use YCbCr422_8 or YUV444Packed but due to a firmware bug
+        // we are stuck with BayerRG8
+
     void setAcquisitionMode(std::string selectedMode);
     void setTriggerType(std::string triggerTypeToSet);
     void setTriggerSource(std::string triggerSourceToSet);
     void setTriggerMode(std::string triggerModeToSet);
+    void setPixelFormat(std::string pixelFormatToSet);
 
     // Image Capture
     void startCapture();
     void stopCapture();
-    bool getImage(ImagePtr *imagePtr, int *timestamp);
+    bool getImage(ImagePtr *imagePtr, long *timestamp);
 
 private:
     void findEpochOffset();
@@ -62,7 +67,7 @@ private:
     CameraList cameraList;
 
     // Contains the pointer to the camera
-    CameraPtr cameraPtr;
+    CameraPtr cameraPtr = 0;
 
     // Number of cameras attached to the system
     int numberOfCameras = 0;

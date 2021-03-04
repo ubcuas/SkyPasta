@@ -64,6 +64,8 @@ bool FlirCamera::initialize(int retryCountMax)
         cout << "Exception in initialize: " << e.what() << endl;
         throw e;
     }
+
+    return false;
 }
 
 /*
@@ -109,13 +111,14 @@ int FlirCamera::cleanExit()
     status = false;
     try
     {
-        if (cameraPtr != nullptr)
+        if (cameraPtr != 0)
         {
+            stopCapture();
             cameraPtr->DeInit();
-            cameraPtr = nullptr;
+            cameraPtr = 0;
         }
+        
         cameraList.Clear();
-        system->ReleaseInstance();
     }
     catch (Spinnaker::Exception& e)
     {
@@ -123,8 +126,8 @@ int FlirCamera::cleanExit()
         throw e;
     }
 
+    // Exit code 11 suggests improper ptr usage. Will not be caught by clean exit"
     cout << "Successfully performed a Clean Exit!" << endl;
-    cout << "exit code 11 suggests improper ptr usage. Will not be caught by clean exit" << endl;
     return 0;
 }
 
@@ -258,6 +261,40 @@ void FlirCamera::setTriggerMode(string triggerModeToSet)
     }
 }
 
+/*
+ * Sets the pixel format to the string passed that represents TriggerModeEnum.
+ * Pixel format determines how the image is processed and saved.
+ * Parameters:
+ * - pixelFormatToSet: Pixel Format that is attempted to be set.
+ */
+void FlirCamera::setPixelFormat(string pixelFormatToSet)
+{
+    try
+    {
+        INodeMap &nodeMap = cameraPtr->GetNodeMap();
+        CEnumerationPtr ptrPixelFormat = nodeMap.GetNode("PixelFormat");
+
+        CEnumEntryPtr ptrPixelFormatEnum = ptrPixelFormat->GetEntryByName(pixelFormatToSet.c_str());
+        if (!IsReadable(ptrPixelFormatEnum))
+        {
+            cout << "Unable to set Pixel Format to " + pixelFormatToSet + " (enum entry retrieval). Aborting..." << endl;
+            return;
+        }
+
+        int64_t pixelFormatSelected = ptrPixelFormatEnum->GetValue();
+        ptrPixelFormat->SetIntValue(pixelFormatSelected);
+        cout << "Pixel Format set to " << pixelFormatToSet << "." << endl;
+    }
+    catch (Spinnaker::Exception& e)
+    {
+        cout << "Error while setting Pixel Format: " << e.what() << endl;
+        throw e;
+    }
+}
+
+/*
+ * Public facing get function for numberOfCameras.
+ */
 int FlirCamera::getNumCameras() const {
     return numberOfCameras;
 }
@@ -486,7 +523,7 @@ void FlirCamera::stopCapture()
  * - imagePtr: Image pointer to be filled by the function
  * - timestamp: Image timestamp in epoch to be filled by the function
  */
-bool FlirCamera::getImage(ImagePtr *imagePtr, int *timestamp)
+bool FlirCamera::getImage(ImagePtr *imagePtr, long *timestamp)
 {
     try
     {
@@ -510,7 +547,7 @@ bool FlirCamera::getImage(ImagePtr *imagePtr, int *timestamp)
         }
 
         // Grabbing the image timestamp and converting it to epoch
-        int imageTime_ms =  imagePointer->GetTimeStamp() * 1000 + cameraTimestampEpochOffset_ms;
+        long imageTime_ms =  imagePointer->GetTimeStamp() * 1000 + cameraTimestampEpochOffset_ms;
 
         *imagePtr = imagePointer;
         *timestamp = imageTime_ms;
@@ -532,12 +569,13 @@ bool FlirCamera::getImage(ImagePtr *imagePtr, int *timestamp)
  * - trigSrc: Trigger Source to be set
  * - trigMode: Trigger Mode to be set
  */
-void FlirCamera::setDefaultSettings(string acqMode, string trigType, string trigSrc, string trigMode)
+void FlirCamera::setDefaultSettings(string acqMode, string trigType, string trigSrc, string trigMode, string pixFormat)
 {
     setAcquisitionMode(acqMode);
     setTriggerType(trigType);
     setTriggerSource(trigSrc);
     setTriggerMode(trigMode);
+    setPixelFormat(pixFormat);
 
     saveUserSet("UserSet0");
 }

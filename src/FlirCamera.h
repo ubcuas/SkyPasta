@@ -10,6 +10,8 @@ using namespace Spinnaker;
 using namespace Spinnaker::GenApi;
 using namespace Spinnaker::GenICam;
 
+const int NULL_CAMERA = 0;
+
 /*
  * Currently this class works only if there is one object of this class in memory.
  * If we are going to go through we this, we might want to make this into a singleton class.
@@ -41,9 +43,10 @@ public:
         std::string trigType = "FrameStart",
         std::string trigSrc = "Software",
         std::string trigMode = "On",
-        std::string pixFormat = "BayerRG8");
-        // Ideally we would use YCbCr422_8 or YUV444Packed but due to a firmware bug
-        // we are stuck with BayerRG8
+        std::string pixFormat = "YUV444Packed");
+        // Due to a bug we can not use this pixel format on a Raspberry Pi
+        // To run this code on a Raspberry Pi change YUV444Packed to BayerRG8 here
+        // and PixelFormat_YUV8_UYV to PixelFormat_BayerRG8 in ImageRetriever
 
     void setAcquisitionMode(std::string selectedMode);
     void setTriggerType(std::string triggerTypeToSet);
@@ -67,7 +70,7 @@ private:
     CameraList cameraList;
 
     // Contains the pointer to the camera
-    CameraPtr cameraPtr = 0;
+    CameraPtr cameraPtr = NULL_CAMERA;
 
     // Number of cameras attached to the system
     int numberOfCameras = 0;

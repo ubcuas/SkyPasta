@@ -210,7 +210,7 @@ void ImageRetriever::getImage(string &imageName, long * timestamp)
         ImagePtr convertedImage;
         try
         {
-            convertedImage = imagePtr->Convert(PixelFormat_BayerRG8, HQ_LINEAR);
+            convertedImage = imagePtr->Convert(PixelFormat_YUV8_UYV, ColorProcessingAlgorithm::RIGOROUS);
         }
         catch (Spinnaker::Exception& e)
         {

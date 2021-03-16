@@ -111,11 +111,11 @@ int FlirCamera::cleanExit()
     status = false;
     try
     {
-        if (cameraPtr != 0)
+        if (cameraPtr != NULL_CAMERA)
         {
             stopCapture();
             cameraPtr->DeInit();
-            cameraPtr = 0;
+            cameraPtr = NULL_CAMERA;
         }
         
         cameraList.Clear();

@@ -196,10 +196,9 @@ void ImageRetriever::getImage(string &imageName, long * timestamp)
     if(cameraType == CameraType::FLIR)
     {
         ImagePtr imagePtr;
-        int image_timestamp_epoch;
         try
         {
-            flirCamera->getImage(&imagePtr, &image_timestamp_epoch);
+            flirCamera->getImage(&imagePtr, timestamp);
         }
         catch (Spinnaker::Exception& e)
         {
@@ -211,7 +210,7 @@ void ImageRetriever::getImage(string &imageName, long * timestamp)
         ImagePtr convertedImage;
         try
         {
-            convertedImage = imagePtr->Convert(PixelFormat_BGR8, HQ_LINEAR); // TODO grab pixel format from camera
+            convertedImage = imagePtr->Convert(PixelFormat_YUV8_UYV, ColorProcessingAlgorithm::RIGOROUS);
         }
         catch (Spinnaker::Exception& e)
         {
@@ -228,7 +227,6 @@ void ImageRetriever::getImage(string &imageName, long * timestamp)
         imagePtr->Release();
 
         imageName = filename.str();
-        *timestamp = image_timestamp_epoch;
     }
 
     isCameraBusy = false;
@@ -238,10 +236,10 @@ void ImageRetriever::getImage(string &imageName, long * timestamp)
 void ImageRetriever::acquireImage()
 {
     string image = "";
-    long * timestamp;
-    getImage(image, timestamp);
+    long timestamp;
+    getImage(image, &timestamp);
 
-    imageTag->addImage(image, *timestamp);
+    imageTag->addImage(image, timestamp);
 }
 
 // Waits for 20 * 100 milliseconds = 2,000 milliseconds = 2 seconds

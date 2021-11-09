@@ -14,7 +14,7 @@ const int NULL_CAMERA = 0;
 
 /*
  * Currently this class works only if there is one object of this class in memory.
- * If we are going to go through we this, we might want to make this into a singleton class.
+ * We might want to make this into a singleton class.
  */
 
 /*
@@ -39,20 +39,24 @@ public:
     bool loadUserSet(std::string userSet);
 
     // Camera setting setting
-    void setDefaultSettings(std::string acqMode = "Continous",
+    void setDefaultSettings(
+        std::string acqMode = "Continous",
         std::string trigType = "FrameStart",
         std::string trigSrc = "Software",
         std::string trigMode = "On",
-        std::string pixFormat = "YUV444Packed");
         // Due to a bug we can not use this pixel format on a Raspberry Pi
         // To run this code on a Raspberry Pi change YUV444Packed to BayerRG8 here
-        // and PixelFormat_YUV8_UYV to PixelFormat_BayerRG8 in ImageRetriever
+        std::string pixFormat = "YUV444Packed",
+        // Set to -1.0 to use camera's auto exposure
+        float expoTime = 250000.0
+        );
 
     void setAcquisitionMode(std::string selectedMode);
     void setTriggerType(std::string triggerTypeToSet);
     void setTriggerSource(std::string triggerSourceToSet);
     void setTriggerMode(std::string triggerModeToSet);
     void setPixelFormat(std::string pixelFormatToSet);
+    void setExposureTime(float exposureTimeToSet);
 
     // Image Capture
     void startCapture();

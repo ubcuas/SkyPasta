@@ -293,6 +293,58 @@ void FlirCamera::setPixelFormat(string pixelFormatToSet)
 }
 
 /*
+ * Sets the exposure time to the float passed.
+ * Exposure time determines the brightness of the image.
+ * If -1.0 is passed, the auto exposure is used, else
+ * sets Auto Exposure to Off.
+ * Parameters:
+ * - exposureTimeToSet: Exposure Time that is attempted to be set.
+ */
+void FlirCamera::setExposureTime(float exposureTimeToSet)
+{
+    try
+    {
+        string exposureTimeAutoString;
+        if (exposureTimeToSet == -1.0) // If the exposureTimeToSet is -1.0, use the camera's auto exposure.
+        {
+            exposureTimeAutoString = "Continuous";
+        }
+        else
+        {
+            exposureTimeAutoString = "Off";
+        }
+
+        INodeMap &nodeMap = cameraPtr->GetNodeMap();
+        CEnumerationPtr ptrExposureAuto = nodeMap.GetNode("ExposureAuto");
+
+        CEnumEntryPtr ptrExposureAutoEnum = ptrExposureAuto->GetEntryByName(exposureTimeAutoString.c_str());
+        if (!IsReadable(ptrExposureAutoEnum))
+        {
+            cout << "Unable to set Exposure Auto to " + exposureTimeAutoString + " (enum entry retrieval). Aborting..." << endl;
+            return;
+        }
+
+        int64_t exposureAutoSelected = ptrExposureAutoEnum->GetValue();
+        ptrExposureAuto->SetIntValue(exposureAutoSelected);
+        cout << "Exposure Auto set to " + exposureTimeAutoString + "." << endl;
+
+        if(exposureTimeAutoString != "Off")
+        {
+            return;
+        }
+
+        CFloatPtr ptrExposureTime = nodeMap.GetNode("ExposureTime");
+        ptrExposureTime->SetValue(exposureTimeToSet);
+        cout <<  "Exposure Time set to " << ptrExposureTime->GetValue() << "." << endl;
+    }
+    catch (Spinnaker::Exception& e)
+    {
+        cout << "Error while setting exposure time: " << e.what() << endl;
+        throw e;
+    }
+}
+
+/*
  * Public facing get function for numberOfCameras.
  */
 int FlirCamera::getNumCameras() const {
@@ -373,7 +425,8 @@ bool FlirCamera::saveUserSet(string userSet)
         return false;
     }
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(300)); // We have to sleep here while the camera gets the save and load nodes ready
+    // We have to sleep here while the camera gets the save and load nodes ready
+    std::this_thread::sleep_for(std::chrono::milliseconds(300));
 
     try
     {
@@ -412,7 +465,8 @@ bool FlirCamera::loadUserSet(string userSet)
         return false;
     }
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(300)); // We have to sleep here while the camera gets the save and load nodes ready
+    // We have to sleep here while the camera gets the save and load nodes ready
+    std::this_thread::sleep_for(std::chrono::milliseconds(300));
 
     try
     {
@@ -568,14 +622,22 @@ bool FlirCamera::getImage(ImagePtr *imagePtr, long *timestamp)
  * - trigType: Trigger Type to be set
  * - trigSrc: Trigger Source to be set
  * - trigMode: Trigger Mode to be set
+ * - pixFormat: Pixel Format to be set
+ * - expoTime: Exposure time to be set
  */
-void FlirCamera::setDefaultSettings(string acqMode, string trigType, string trigSrc, string trigMode, string pixFormat)
+void FlirCamera::setDefaultSettings(string acqMode,
+                                    string trigType,
+                                    string trigSrc,
+                                    string trigMode,
+                                    string pixFormat,
+                                    float expoTime)
 {
     setAcquisitionMode(acqMode);
     setTriggerType(trigType);
     setTriggerSource(trigSrc);
     setTriggerMode(trigMode);
     setPixelFormat(pixFormat);
+    setExposureTime(expoTime);
 
     saveUserSet("UserSet0");
 }

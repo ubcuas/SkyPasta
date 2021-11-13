@@ -48,7 +48,7 @@ public:
         // To run this code on a Raspberry Pi change YUV444Packed to BayerRG8 here
         std::string pixFormat = "YUV444Packed",
         // Set to -1.0 to use camera's auto exposure
-        float expoTime = 250000.0
+        float expoTime = -1.0
         );
 
     void setAcquisitionMode(std::string selectedMode);

@@ -6,6 +6,8 @@
 
 using namespace std;
 
+
+
 FlirCamera::FlirCamera()
 {   
     if(!initialize())
@@ -82,17 +84,14 @@ void FlirCamera::findEpochOffset()
 
         INodeMap &nodeMap = cameraPtr->GetNodeMap();
         CIntegerPtr ptrTimestampLatchValue = nodeMap.GetNode("TimestampLatchValue");
-        CIntegerPtr ptrTimestampIncrement = nodeMap.GetNode("TimestampIncrement");
-        int timestampTickFrequency = ptrTimestampIncrement->GetValue();
 
         using namespace std::chrono;
         cameraPtr->TimestampLatch.Execute();
         milliseconds triggerTime_ms = duration_cast< milliseconds >(system_clock::now().time_since_epoch());
 
-        //TimestampLatchValue return in ticks and GevTimestampTickFrequency in seconds
-        int timestampLatchValue = ptrTimestampLatchValue->GetValue();
-        int timestampLatch_ms = (double) timestampLatchValue / timestampTickFrequency / 1000; 
-        cameraTimestampEpochOffset_ms = triggerTime_ms.count() - timestampLatch_ms;
+        int64_t timestampLatchValue = ptrTimestampLatchValue->GetValue();
+
+        cameraTimestampEpochOffset_ms = triggerTime_ms.count() - (timestampLatchValue / 1000 / 1000);    
     }
     catch (Spinnaker::Exception& e)
     {
@@ -347,7 +346,8 @@ void FlirCamera::setExposureTime(float exposureTimeToSet)
 /*
  * Public facing get function for numberOfCameras.
  */
-int FlirCamera::getNumCameras() const {
+int FlirCamera::getNumCameras() const
+{
     return numberOfCameras;
 }
 
@@ -586,12 +586,12 @@ bool FlirCamera::getImage(ImagePtr *imagePtr, long *timestamp)
         CEnumerationPtr ptrAcquisitionMode = nodeMap.GetNode("AcquisitionMode");
         CEnumEntryPtr acquisitionMode = ptrAcquisitionMode->GetCurrentEntry();
 
-        if(acquisitionMode->GetValue() == AcquisitionModeEnums::AcquisitionMode_Continuous)
+        if(workingMode == Modes::triggerMode)
         {
             cameraPtr->TriggerSoftware.Execute();
         }
 
-        ImagePtr imagePointer = cameraPtr->GetNextImage(1000);
+        ImagePtr imagePointer = cameraPtr->GetNextImage(100);
 
         if (imagePointer->IsIncomplete())
         {
@@ -600,16 +600,23 @@ bool FlirCamera::getImage(ImagePtr *imagePtr, long *timestamp)
             return false;
         }
 
-        // Grabbing the image timestamp and converting it to epoch
-        long imageTime_ms =  imagePointer->GetTimeStamp() * 1000 + cameraTimestampEpochOffset_ms;
+        int64_t imageTime_ms = (double)imagePointer->GetTimeStamp() / 1000 / 1000  + cameraTimestampEpochOffset_ms; 
 
         *imagePtr = imagePointer;
         *timestamp = imageTime_ms;
     }
     catch (Spinnaker::Exception& e)
     {
-        cout << "Error while trying to grab an image: " << e.what() << endl;
-        throw e;
+        if (workingMode == Modes::continuousMode && strcmp(e.GetErrorMessage(), "Failed waiting for EventData on NEW_BUFFER_DATA event.") == 0) 
+        {
+            return false;
+        }
+        else
+        {
+            cout << "Error while trying to grab an image: " << e.what() << endl;
+            throw e;  
+        }
+        
     }
 
     return true;
@@ -636,7 +643,7 @@ void FlirCamera::setDefaultSettings(string acqMode,
     setTriggerType(trigType);
     setTriggerSource(trigSrc);
     setTriggerMode(trigMode);
-    setPixelFormat(pixFormat);
+    setPixelFormat(pixFormat);  
     setExposureTime(expoTime);
 
     saveUserSet("UserSet0");

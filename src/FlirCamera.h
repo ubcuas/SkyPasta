@@ -12,6 +12,14 @@ using namespace Spinnaker::GenICam;
 
 const int NULL_CAMERA = 0;
 
+enum Modes
+{
+    triggerMode = 0,
+    continuousMode = 1
+};
+
+const int workingMode = Modes::continuousMode;
+
 /*
  * Currently this class works only if there is one object of this class in memory.
  * We might want to make this into a singleton class.
@@ -80,7 +88,7 @@ private:
     int numberOfCameras = 0;
 
     // Offset we apply to image timestamps to convert them to epoch
-    int cameraTimestampEpochOffset_ms = 0;
+    int64_t cameraTimestampEpochOffset_ms = 0;
 
     // Whether or not the camera is connected
     bool status = false;

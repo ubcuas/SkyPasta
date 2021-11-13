@@ -134,7 +134,6 @@ void ImageRetriever::setTriggerMode(string triggerModeToSet)
 // Reset image and time tracking and start acquisition
 void ImageRetriever::startAcquisition()
 {
-
     acquistionStartTime = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch()).count();
 
     //INodeMap &nodeMap = cameraPtr->GetNodeMap();
@@ -187,22 +186,19 @@ void ImageRetriever::stopAcquisition() {
 // Acquires a single image and saves it to disk
 void ImageRetriever::getImage(string &imageName, long * timestamp)
 {
-    if(!waitForCameraAvailability(__FUNCTION__))
-    {
-        throw std::runtime_error("Camera busy timeout");
-    }
-    isCameraBusy = true;
-
     if(cameraType == CameraType::FLIR)
     {
         ImagePtr imagePtr;
         try
         {
-            flirCamera->getImage(&imagePtr, timestamp);
+            if (!flirCamera->getImage(&imagePtr, timestamp))
+            {
+                imageName = "";
+                return;
+            }
         }
         catch (Spinnaker::Exception& e)
         {
-            isCameraBusy = false;
             cout << "Exception while getting image: " << e.what() << endl;
             throw e;
         }
@@ -215,7 +211,6 @@ void ImageRetriever::getImage(string &imageName, long * timestamp)
         catch (Spinnaker::Exception& e)
         {
             cout << "Error while converting image: " << e.what() << endl;
-            isCameraBusy = false;
             imagePtr->Release();
             throw e;
         }
@@ -228,8 +223,6 @@ void ImageRetriever::getImage(string &imageName, long * timestamp)
 
         imageName = filename.str();
     }
-
-    isCameraBusy = false;
 }
 
 // Grabs an image, adds image location and timestamp_telem to ImageTag
@@ -238,6 +231,11 @@ void ImageRetriever::acquireImage()
     string image = "";
     long timestamp;
     getImage(image, &timestamp);
+
+    if (image == "")
+    {
+        return;
+    }
 
     imageTag->addImage(image, timestamp);
 }

@@ -10,19 +10,23 @@ constexpr int PORT = 5000;
 constexpr auto ADDRESS  = "127.0.0.1";
 constexpr int RATE = 2; // delay between each image acquisition trigger
 
+const int NUM_THREADS = 8; // max number of threads for getting images 
+
 constexpr int SECONDS_TO_RUN = -1; // Set to -1 to run indefinitely
 
 using namespace std;
 
 bool stopFlag = false;
 
-void acquireImagesFixedRate(int rate, ImageRetriever *imageRetriever){
+void acquireImagesFixedRate(int rate, ImageRetriever *imageRetriever)
+{
     imageRetriever->startAcquisition();
 
     while (!stopFlag){
         cout << "Acquiring Image" << endl;
         auto triggerCameraOnceFuture(async(launch::async, &ImageRetriever::acquireImage, imageRetriever));
-        if (stopFlag){
+        if (stopFlag)
+        {
             break;
         }
         sleep(rate);
@@ -31,6 +35,18 @@ void acquireImagesFixedRate(int rate, ImageRetriever *imageRetriever){
     }
 
     imageRetriever->stopAcquisition();
+}
+
+void acquireImages(ImageRetriever *imageRetriever)
+{
+    while (!stopFlag)
+    {
+        imageRetriever->acquireImage();
+        if (stopFlag)
+        {
+            break;
+        }
+    }
 }
 
 // Reads Telemetry data from socket, exits on error from telemetry.
@@ -80,7 +96,14 @@ int main()
 
         cout << "Camera setup starting" << endl;
         FlirCamera flirCamera;
-        flirCamera.setDefaultSettings();
+        if (workingMode == Modes::triggerMode)
+        {
+            flirCamera.setDefaultSettings();
+        }
+        else if (workingMode == Modes::continuousMode)
+        {
+            flirCamera.setDefaultSettings("Continous", "FrameStart", "Software", "Off", "BayerRG8");
+        }
         cout << "Camera setup complete" << endl;
 
         cout << "ImageRetriever setup starting" << endl;
@@ -92,7 +115,22 @@ int main()
         telemetry.connectServer();
         cout << "Telemetry setup complete" << endl;
 
-        auto acquireImagesFixedRateFuture(async(launch::async, acquireImagesFixedRate, RATE, &imageRetriever));
+        thread threadList[NUM_THREADS]; 
+        if (workingMode == Modes::triggerMode)
+        {
+            threadList[0] = thread(acquireImagesFixedRate,  RATE, &imageRetriever);
+        }
+        else if (workingMode == Modes::continuousMode) 
+        {
+            imageRetriever.startAcquisition();
+
+            for (int i = 0; i < NUM_THREADS; i++)
+            {
+                threadList[i] = thread(acquireImages, &imageRetriever);
+            }
+        }
+
+
         auto readFromSocketFuture(async(launch::async, readFromSocket, &telemetry));
         auto processNextImageFuture(async(launch::async, tagImages, &imageTag));
 
@@ -104,11 +142,23 @@ int main()
             if(count == SECONDS_TO_RUN) {stopFlag = true;} 
             std::this_thread::sleep_for(std::chrono::milliseconds(1000)); 
             count++;
-        } 
+        }
 
         cout << "Stopping..." << endl;
 
-        acquireImagesFixedRateFuture.get();
+        if (workingMode == Modes::triggerMode)
+        {
+            threadList[0].join();
+        }
+        else if (workingMode == Modes::continuousMode) 
+        {
+            for (int i = 0; i < NUM_THREADS; i++)
+            {
+                threadList[i].join();
+            }
+
+            imageRetriever.stopAcquisition();
+        }
 
         imageRetriever.releaseCamera();
     }

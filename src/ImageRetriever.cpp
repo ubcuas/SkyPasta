@@ -5,20 +5,21 @@ using namespace std;
 
 // Initializes and ensures images can be saved by saving a test file and deleting it
 // Creates image directory if necessary
-ImageRetriever::ImageRetriever(ImageTag *imageTag, CameraType cameraType, FlirCamera *flirCamera)
+ImageRetriever::ImageRetriever(ImageTag *imageTag, CameraType cameraType, FlirCamera *flirCamera, string filePath)
 {
     this->flirCamera = flirCamera;
     this->imageTag = imageTag;
     this->cameraType = cameraType;
+    this->filePath = filePath;
 
-    mkdir("../Images", 0777); //Creating a directory with all the permissions
-    FILE *tempFile = fopen("../Images/test.txt", "w+");
+    mkdir(filePath + "/Images", 0777); //Creating a directory with all the permissions
+    FILE *tempFile = fopen(filePath + "/Images/test.txt", "w+");
     if (tempFile == nullptr)
     {
         cout << "Failed to create file in current folder. Please check permissions." << endl;
     }
     fclose(tempFile);
-    remove("../Images/test.txt");
+    remove(filePath + "/Images/test.txt");
 
     if(cameraType == CameraType::FLIR)
     {
@@ -216,7 +217,7 @@ void ImageRetriever::getImage(string &imageName, long * timestamp)
         }
 
         ostringstream filename;
-        filename << "../Images/" << acquistionStartTime << "-" << imageNumber++ << ".jpg";
+        filename << this->filePath + "/Images/" << acquistionStartTime << "-" << imageNumber++ << ".jpg";
         convertedImage->Save(filename.str().c_str());
         cout << "Image saved at " << filename.str() << endl;
         imagePtr->Release();

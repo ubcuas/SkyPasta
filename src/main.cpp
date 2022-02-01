@@ -86,7 +86,7 @@ void tagImages(ImageTag *imageTag){
     }
 }
 
-int main()
+int main(int argc, char *argv[])
 {
     try
     {
@@ -107,7 +107,19 @@ int main()
         cout << "Camera setup complete" << endl;
 
         cout << "ImageRetriever setup starting" << endl;
-        ImageRetriever imageRetriever(&imageTag, CameraType::FLIR, &flirCamera);
+        if (argc == 2) 
+        {
+            ImageRetriever imageRetriever(&imageTag, CameraType::FLIR, &flirCamera, argv[1]);
+        }
+        else if (argc == 1) 
+        {
+            ImageRetriever imageRetriever(&imageTag, CameraType::FLIR, &flirCamera);
+        }
+        else 
+        {
+            flirCamera.cleanExit();
+            throw std::invalid_argument("Invalid arguments for ImageRetriever setup");
+        }
         cout << "ImageRetriever setup complete" << endl;
 
         cout << "Telemetry setup starting" << endl;

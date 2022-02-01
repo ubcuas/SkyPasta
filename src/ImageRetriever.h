@@ -1,5 +1,6 @@
 #include "FlirCamera.h"
 #include "ImageTag.h"
+#include "string.h"
 #include <map>
 #include <chrono>
 #include <iomanip>
@@ -21,7 +22,7 @@ enum class CameraType{
 class ImageRetriever
 {
 public:
-    ImageRetriever(ImageTag *imageTag, CameraType cameraType, FlirCamera *flirCamera);
+    ImageRetriever(ImageTag *imageTag, CameraType cameraType, FlirCamera *flirCamera, string filePath = "..");
     void releaseCamera();
 
     void startAcquisition();
@@ -42,6 +43,7 @@ private:
     FlirCamera *flirCamera = nullptr;
     ImageTag *imageTag = nullptr;
     CameraType cameraType;
+    string filePath;
 
     double totalTime = 0;
     int imageNumber = 0;

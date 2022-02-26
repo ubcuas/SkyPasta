@@ -3,40 +3,65 @@
 
 using namespace std;
 
-// Initializes and ensures images can be saved by saving a test file and deleting it
-// Creates image directory if necessary
-ImageRetriever::ImageRetriever(ImageTag *imageTag, CameraType cameraType, FlirCamera *flirCamera, string filePath)
+/* Initializes and ensures images can be saved by saving a test file and deleting it
+ * Creates image directory if necessary
+ * Parameters:
+ * - imageTag: ImageTag object that will tag images with geotagging.
+ */
+ImageRetriever::ImageRetriever(ImageTag *imageTag, FlirCamera *flirCamera, string imageFilePath)
 {
     this->flirCamera = flirCamera;
     this->imageTag = imageTag;
-    this->cameraType = cameraType;
-    this->filePath = filePath;
+    this->cameraType = CameraType::FLIR;
+    this->imageFilePath = imageFilePath;
 
-    mkdir(filePath + "/Images", 0777); //Creating a directory with all the permissions
-    FILE *tempFile = fopen(filePath + "/Images/test.txt", "w+");
+    fileSetup();
+
+    if (flirCamera == nullptr)
+    {
+        cout << "No Camera devices attached to Image Retriever " << endl;
+        return;
+    }
+    if (!flirCamera->getCamera()->IsInitialized())
+    {
+        cout << "Camera not initialized" << endl;
+        return;
+    }
+}
+
+// Overlords the constructor
+ImageRetriever::ImageRetriever(ImageTag *imageTag, GenericUSBCamera *genericUSBCamera, string imageFilePath)
+{
+    this->genericUSBCamera = genericUSBCamera;
+    this->imageTag = imageTag;
+    this->cameraType = CameraType::GenericUSB;
+    this->imageFilePath = imageFilePath;
+
+    fileSetup();
+
+    if (genericUSBCamera == nullptr)
+    {
+        cout << "No Camera devices attached to Image Retriever " << endl;
+        return;
+    }
+}
+
+/*
+ * Creates and tests a folder on disk to save images to.
+ */
+void ImageRetriever::fileSetup()
+{
+    mkdir(imageFilePath.c_str(), 0777); //Creating a directory with all the permissions
+    FILE *tempFile = fopen((imageFilePath + "/test.txt").c_str(), "w+");
     if (tempFile == nullptr)
     {
         cout << "Failed to create file in current folder. Please check permissions." << endl;
     }
     fclose(tempFile);
-    remove(filePath + "/Images/test.txt");
-
-    if(cameraType == CameraType::FLIR)
-    {
-        if (flirCamera == nullptr)
-        {
-            cout << "No Camera devices attached to Image Retriever " << endl;
-            return;
-        }
-        if (!flirCamera->getCamera()->IsInitialized())
-        {
-            cout << "Camera not initialized" << endl;
-            return;
-        }
-    }
+    remove((imageFilePath + "/test.txt").c_str());
 }
 
-// Sets AcquisitionMode
+// Sets AcquisitionMode. See FlirCamera::setTriggerType.
 void ImageRetriever::setAcquisitionMode(string acquisitionModeToSet)
 {
     if(!waitForCameraAvailability(__FUNCTION__))
@@ -60,7 +85,7 @@ void ImageRetriever::setAcquisitionMode(string acquisitionModeToSet)
     isCameraBusy = false;
 }
 
-// Sets TriggerType
+// Sets TriggerType. See FlirCamera::setTriggerType.
 void ImageRetriever::setTriggerType(string triggerTypeToSet)
 {
     if(!waitForCameraAvailability(__FUNCTION__))
@@ -84,7 +109,7 @@ void ImageRetriever::setTriggerType(string triggerTypeToSet)
     isCameraBusy = false;
 }
 
-// Sets TriggerSource
+// Sets TriggerSource. See FlirCamera::setTriggerSource.
 void ImageRetriever::setTriggerSource(string triggerSourceToSet)
 {
     if(!waitForCameraAvailability(__FUNCTION__))
@@ -108,7 +133,7 @@ void ImageRetriever::setTriggerSource(string triggerSourceToSet)
     isCameraBusy = false;
 }
 
-// SetsTriggerMode
+// Sets TriggerMode. See FlirCamera::setTriggerMode.
 void ImageRetriever::setTriggerMode(string triggerModeToSet)
 {
     if(!waitForCameraAvailability(__FUNCTION__))
@@ -132,12 +157,15 @@ void ImageRetriever::setTriggerMode(string triggerModeToSet)
     isCameraBusy = false;
 }
 
-// Reset image and time tracking and start acquisition
+/*
+ * Resets image and time tracking and starts a new acquisition
+ */
 void ImageRetriever::startAcquisition()
 {
-    acquistionStartTime = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch()).count();
+    acquisitionStartTime = std::chrono::duration_cast< std::chrono::milliseconds >(std::chrono::system_clock::now().time_since_epoch()).count();
 
-    //INodeMap &nodeMap = cameraPtr->GetNodeMap();
+    cout << "Acquisition start time is " << acquisitionStartTime << endl;
+
     if(!waitForCameraAvailability(__FUNCTION__))
     {
         throw std::runtime_error("Camera busy timeout");
@@ -145,10 +173,8 @@ void ImageRetriever::startAcquisition()
 
     isCameraBusy = true;
     imageNumber = 0;
-    totalTime = 0;
 
     cout << "Begin Acquisition..." << endl;
-
     if(cameraType == CameraType::FLIR)
     {
         try
@@ -160,32 +186,54 @@ void ImageRetriever::startAcquisition()
             isCameraBusy = false;
             throw e;
         }
-    }
 
-    isCameraBusy = false;
+        isCameraBusy = false;
+    }
+    else if (cameraType == CameraType::GenericUSB)
+    {
+        if(!genericUSBCamera->openCamera())
+        {
+            isCameraBusy = false;
+            throw std::runtime_error("Can not open camera...");
+        }
+        isCameraBusy = false;
+    }
 }
 
-// Stops acquisition of the camera
-void ImageRetriever::stopAcquisition() {
+/*
+ * Stops acquisition of the camera
+ */
+void ImageRetriever::stopAcquisition()
+{
     if(!waitForCameraAvailability(__FUNCTION__))
     {
         throw std::runtime_error("Camera busy timeout");
     }
     isCameraBusy = true;
 
-    cout << "Stopping..." << endl;
+        cout << "Stopping..." << endl;
     if(cameraType == CameraType::FLIR)
     {
         flirCamera->stopCapture();
-    }
-    isCameraBusy = false;
+        isCameraBusy = false;
 
-    cout << "Acquisition Stopped" << endl << endl;
-    cout << "Number of images Acquired: " << imageNumber << endl;
+        cout << "Acquisition Stopped" << endl << endl;
+        cout << "Number of images Acquired: " << imageNumber << endl;
+    }
+    else if (cameraType == CameraType::GenericUSB)
+    {
+        genericUSBCamera->closeCamera();
+    }
 }
 
-// Acquires a single image and saves it to disk
-void ImageRetriever::getImage(string &imageName, long * timestamp)
+/*
+ * Acquires a single image and saves it to disk
+ * Parameters:
+ * - imagePath: Relative file path to the image, including the file name. To be modified by the function.
+ * - timestamp: Timestamp of the image, in epcoh of the computer clock. To be modified by the function.
+ * - getTimestamp: Whether or not the camera supports timestamps. True for CameraType::FLIR, false for CameraType::GenericUSB.
+ */
+void ImageRetriever::getImage(string &imagePath, long * timestamp, bool getTimestamp)
 {
     if(cameraType == CameraType::FLIR)
     {
@@ -194,7 +242,7 @@ void ImageRetriever::getImage(string &imageName, long * timestamp)
         {
             if (!flirCamera->getImage(&imagePtr, timestamp))
             {
-                imageName = "";
+                imagePath = "";
                 return;
             }
         }
@@ -216,32 +264,66 @@ void ImageRetriever::getImage(string &imageName, long * timestamp)
             throw e;
         }
 
-        ostringstream filename;
-        filename << this->filePath + "/Images/" << acquistionStartTime << "-" << imageNumber++ << ".jpg";
-        convertedImage->Save(filename.str().c_str());
-        cout << "Image saved at " << filename.str() << endl;
+        ostringstream filePath;
+        filePath << imageFilePath + "/" << acquisitionStartTime << "-" << imageNumber++ << ".jpg";
+        convertedImage->Save(filePath.str().c_str());
+        cout << "Image saved at " << filePath.str() << endl;
         imagePtr->Release();
 
-        imageName = filename.str();
+        imagePath = filePath.str();
+    }
+    else if (cameraType == CameraType::GenericUSB)
+    {
+        if (getTimestamp)
+        {
+            cout << "Asked for a timestamp but Generic USB Camera does not support it. Aboring...";
+            std::runtime_error("Requested timesamp for Generic USB Camera. Functionality not yet supported.");
+        }
+
+        cv::Mat image;
+        if (!genericUSBCamera->getImage(&image))
+        {
+            imagePath = "";
+            return;
+        }
+
+        ostringstream filePath;
+        filePath << imageFilePath << "/" << acquisitionStartTime << "-" << imageNumber++ << ".jpg";
+        imwrite(filePath.str(), image);
+
+        imagePath = filePath.str();
     }
 }
 
-// Grabs an image, adds image location and timestamp_telem to ImageTag
-void ImageRetriever::acquireImage()
+/*
+ * Gets images from the camera and tags them with geolocation.
+ * Parameters:
+ * - tagImages: Boolean to determine if the acquired images should have timestamps and geolocation.
+ */
+void ImageRetriever::acquireImage(bool tagImages)
 {
     string image = "";
     long timestamp;
-    getImage(image, &timestamp);
+    getImage(image, &timestamp, tagImages);
 
     if (image == "")
     {
         return;
     }
 
-    imageTag->addImage(image, timestamp);
+    if (tagImages)
+    {
+        imageTag->addImage(image, timestamp);
+    }
 }
 
-// Waits for 20 * 100 milliseconds = 2,000 milliseconds = 2 seconds
+/*
+ * Tasked with making sure that a command send to a camera is resolved before sending another one.
+ * Waits for 20 * 100 milliseconds = 2,000 milliseconds = 2 seconds
+ * Should be replaced with a mutex...
+ * Parameters:
+ * - func: The function that calls this function. used for debugging.
+ */
 bool ImageRetriever::waitForCameraAvailability(const char* func)
 {
     int count = 0;
@@ -271,6 +353,10 @@ void ImageRetriever::releaseCamera()
     if(cameraType == CameraType::FLIR)
     {
         flirCamera->cleanExit();   
+    }
+    else if (cameraType == CameraType::GenericUSB)
+    {
+        genericUSBCamera->closeCamera();
     }
     isCameraBusy = false;
 }

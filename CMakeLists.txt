@@ -41,6 +41,7 @@ set( SPINNAKER_LIB_INCLUDES "/opt/spinnaker/include" "/usr/include/spinnaker" )
 add_executable( skypasta
   ${CMAKE_SOURCE_DIR}/src/main.cpp
   ${CMAKE_SOURCE_DIR}/src/FlirCamera.cpp
+  ${CMAKE_SOURCE_DIR}/src/GenericUSBCamera.cpp
   ${CMAKE_SOURCE_DIR}/src/ImageRetriever.cpp
   ${CMAKE_SOURCE_DIR}/src/Telemetry.cpp
   ${CMAKE_SOURCE_DIR}/src/Telemetry.cpp
@@ -48,5 +49,5 @@ add_executable( skypasta
 )
 
 target_include_directories( skypasta SYSTEM PUBLIC ${SPINNAKER_LIB_INCLUDES} ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}/include )
-target_link_libraries( skypasta PUBLIC ${SPINNAKER_LIB} exiv2lib pthread )
+target_link_libraries( skypasta PUBLIC ${SPINNAKER_LIB} exiv2lib pthread opencv_core opencv_imgproc opencv_highgui opencv_ml opencv_video opencv_videoio opencv_imgcodecs )
 target_compile_options( skypasta PUBLIC "-Wall" "-Wextra" )

@@ -26,6 +26,7 @@ SkyPasta must be run in a Linux environment (Ubuntu 20.04).
 - CMake
 - OpenCV
 - Spinnaker 2.5.0.80 from FLIR Systems
+- It is recommended to be running https://odroid.in/ubuntu_20.04lts/XU3_XU4_MC1_HC1_HC2/ubuntu-20.04-5.4-mate-odroid-xu4-20210113.img.xz
 
 ## Setup
 

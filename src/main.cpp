@@ -50,30 +50,24 @@ void acquireImages(ImageRetriever *imageRetriever)
 }
 
 // Reads Telemetry data from socket, exits on error from telemetry.
-void readFromSocket(Telemetry *telemetry){
+void readFromACOM(Telemetry *telemetry){
     int reconnectAttempts = 0;
-//    if (!telemetry->isConnected()){
-//        cout << "Telemetry error: Not connected" << endl;
-//        return;
-//    }
+
     cout << "Here:" << endl;
-    while (!stopFlag)
-    {
-        if (telemetry->readData() == -1 || !telemetry->isConnected()){
+    while (!stopFlag){
+        if (telemetry->readJsonFromAcom() == -1){
             cout << "Error with server, attempting to reconnect..." << endl;
+            reconnectAttempts++;
 
-            telemetry->connectServer();
-
-            if (telemetry->isConnected()){
-                reconnectAttempts = 0;
-                continue;
-            }
-            //reconnectAttempts ++;
             if (reconnectAttempts > 5 || stopFlag){
                 return;
             }
+
             sleep(3);
+        } else {
+            reconnectAttempts = 0;
         }
+
         if (stopFlag){
             return;
         }
@@ -121,7 +115,8 @@ int main(int argc, char *argv[])
         Telemetry telemetry(ADDRESS,PORT, &imageTag);
         telemetry.connectServer();
         
-        auto readFromSocketFuture(async(launch::async, readFromSocket, &telemetry));
+        // Change from read to socket to the HTTP GET
+        auto readFromSocketFuture(async(launch::async, readFromACOM, &telemetry));
         auto processNextImageFuture(async(launch::async, tagImages, &imageTag));
         cout << "Telemetry setup complete" << endl;
 

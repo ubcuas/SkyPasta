@@ -3,6 +3,8 @@
 //
 
 #include "Telemetry.h"
+#include <cpr/cpr.h>
+#include <iostream>
 
 using namespace std;
 
@@ -49,6 +51,25 @@ int Telemetry::readData(){
         cout << "Telemetry Error: Not connected" << endl;
         return -1;
     }
+
+    return 0;
+}
+
+int Telemetry::readJsonFromAcom(){
+    // Make the http request to ACOM
+    cpr::Response r1 = cpr::Get(cpr::Url{"http://localhost:5000/aircraft/telemetry/gps_with_timestamp"});
+    
+    if (r1.status_code != 200){
+        cout << "Telemetry Error: Not connected" << endl;
+        return -1;
+    }
+
+    // Convert string to char*
+    string s = r1.text;
+    char *buffer = s.data();
+
+    // Push to addTelemtry call
+    imageTag->addTelemetry(buffer);
 
     return 0;
 }

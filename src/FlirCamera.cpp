@@ -5,8 +5,7 @@
 #include <thread>
 
 using namespace std;
-
-
+using namespace std::chrono;
 
 FlirCamera::FlirCamera()
 {   
@@ -47,7 +46,7 @@ bool FlirCamera::initialize(int retryCountMax)
                 else
                 {
                     cout << "Sleeping for 1 second before re-trying." << endl;
-                    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+                    this_thread::sleep_for(milliseconds(1000));
                     continue;
                 }
             }
@@ -85,7 +84,6 @@ void FlirCamera::findEpochOffset()
         INodeMap &nodeMap = cameraPtr->GetNodeMap();
         CIntegerPtr ptrTimestampLatchValue = nodeMap.GetNode("TimestampLatchValue");
 
-        using namespace std::chrono;
         cameraPtr->TimestampLatch.Execute();
         milliseconds triggerTime_ms = duration_cast< milliseconds >(system_clock::now().time_since_epoch());
 
@@ -426,7 +424,7 @@ bool FlirCamera::saveUserSet(string userSet)
     }
 
     // We have to sleep here while the camera gets the save and load nodes ready
-    std::this_thread::sleep_for(std::chrono::milliseconds(300));
+    this_thread::sleep_for(milliseconds(300));
 
     try
     {
@@ -466,7 +464,7 @@ bool FlirCamera::loadUserSet(string userSet)
     }
 
     // We have to sleep here while the camera gets the save and load nodes ready
-    std::this_thread::sleep_for(std::chrono::milliseconds(300));
+    this_thread::sleep_for(milliseconds(300));
 
     try
     {

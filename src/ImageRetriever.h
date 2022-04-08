@@ -30,13 +30,13 @@ const std::string defaultImageFilePath = "../Images";
 class ImageRetriever
 {
 public:
-    ImageRetriever(ImageTag *imageTag, FlirCamera *flirCamera, std::string imageFilePath = defaultImageFilePath);
-    ImageRetriever(ImageTag *imageTag, GenericUSBCamera *genericUSBCamera, std::string imageFilePath = defaultImageFilePath);
+    ImageRetriever(ImageTag *imageTag, FlirCamera *flirCamera, std::string imageFilePath = defaultImageFilePath, bool isTagImage = true);
+    ImageRetriever(ImageTag *imageTag, GenericUSBCamera *genericUSBCamera, std::string imageFilePath = defaultImageFilePath, bool isTagImage = true);
     void releaseCamera();
 
     void startAcquisition();
     void stopAcquisition();
-    void acquireImage(bool tagImages);
+    void acquireImage();
     
     void setAcquisitionMode(std::string AcquisitionMode);
     void setTriggerType(std::string triggerSourceToSet);
@@ -47,7 +47,7 @@ public:
 
 private:
     void fileSetup();
-    void getImage(std::string &imagePath, long * timestamp, bool getTimestamp);
+    void getImage(std::string &imagePath, long * timestamp);
     bool waitForCameraAvailability(const char* func);
 
     // Camera objects
@@ -69,6 +69,9 @@ private:
 
     // Used for making sure multiple commands are not send at the same time. See waitForCameraAvailability
     bool isCameraBusy = false;
+
+    // Flag for tagging the images with geolocation
+    bool isTagImage;
 };
 
 #endif // SKYPASTA_IMAGE_RETRIEVER_H

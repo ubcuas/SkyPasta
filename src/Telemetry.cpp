@@ -66,7 +66,7 @@ int Telemetry::readJsonFromAcom(){
 
     // Convert string to char*
     string s = r1.text;
-    char *buffer = s.data();
+    char *buffer = (char*) s.data();
 
     // Push to addTelemtry call
     imageTag->addTelemetry(buffer);

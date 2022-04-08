@@ -16,6 +16,7 @@ public:
     int connectServer();
     int readData();
     bool isConnected()const {return this -> connected;};
+    int readJsonFromAcom();
 
 private:
     bool connected = false;

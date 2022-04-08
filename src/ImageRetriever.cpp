@@ -8,12 +8,13 @@ using namespace std;
  * Parameters:
  * - imageTag: ImageTag object that will tag images with geotagging.
  */
-ImageRetriever::ImageRetriever(ImageTag *imageTag, FlirCamera *flirCamera, string imageFilePath)
+ImageRetriever::ImageRetriever(ImageTag *imageTag, FlirCamera *flirCamera, string imageFilePath, bool isTagImage)
 {
     this->flirCamera = flirCamera;
     this->imageTag = imageTag;
     this->cameraType = CameraType::FLIR;
     this->imageFilePath = imageFilePath;
+    this->isTagImage = isTagImage;
 
     fileSetup();
 
@@ -30,12 +31,13 @@ ImageRetriever::ImageRetriever(ImageTag *imageTag, FlirCamera *flirCamera, strin
 }
 
 // Overlords the constructor
-ImageRetriever::ImageRetriever(ImageTag *imageTag, GenericUSBCamera *genericUSBCamera, string imageFilePath)
+ImageRetriever::ImageRetriever(ImageTag *imageTag, GenericUSBCamera *genericUSBCamera, string imageFilePath, bool isTagImage)
 {
     this->genericUSBCamera = genericUSBCamera;
     this->imageTag = imageTag;
     this->cameraType = CameraType::GenericUSB;
     this->imageFilePath = imageFilePath;
+    this->isTagImage = isTagImage;
 
     fileSetup();
 
@@ -231,9 +233,8 @@ void ImageRetriever::stopAcquisition()
  * Parameters:
  * - imagePath: Relative file path to the image, including the file name. To be modified by the function.
  * - timestamp: Timestamp of the image, in epcoh of the computer clock. To be modified by the function.
- * - getTimestamp: Whether or not the camera supports timestamps. True for CameraType::FLIR, false for CameraType::GenericUSB.
  */
-void ImageRetriever::getImage(string &imagePath, long * timestamp, bool getTimestamp)
+void ImageRetriever::getImage(string &imagePath, long * timestamp)
 {
     if(cameraType == CameraType::FLIR)
     {
@@ -274,14 +275,8 @@ void ImageRetriever::getImage(string &imagePath, long * timestamp, bool getTimes
     }
     else if (cameraType == CameraType::GenericUSB)
     {
-        if (getTimestamp)
-        {
-            cout << "Asked for a timestamp but Generic USB Camera does not support it. Aboring...";
-            std::runtime_error("Requested timesamp for Generic USB Camera. Functionality not yet supported.");
-        }
-
         cv::Mat image;
-        if (!genericUSBCamera->getImage(&image))
+        if (!genericUSBCamera->getImage(&image, timestamp))
         {
             imagePath = "";
             return;
@@ -297,21 +292,20 @@ void ImageRetriever::getImage(string &imagePath, long * timestamp, bool getTimes
 
 /*
  * Gets images from the camera and tags them with geolocation.
- * Parameters:
- * - tagImages: Boolean to determine if the acquired images should have timestamps and geolocation.
  */
-void ImageRetriever::acquireImage(bool tagImages)
+void ImageRetriever::acquireImage()
 {
+    bool getTimestamp = this->isTagImage;
     string image = "";
     long timestamp;
-    getImage(image, &timestamp, tagImages);
+    getImage(image, &timestamp);
 
     if (image == "")
     {
         return;
     }
 
-    if (tagImages)
+    if (getTimestamp)
     {
         imageTag->addImage(image, timestamp);
     }

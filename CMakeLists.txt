@@ -22,11 +22,10 @@ endif()
 # Libexiv2 dependency
 # Version 0.27.1 has an ARM compilation issue. The issue is fixed on a branch but a new version hasn't been released...
 include(FetchContent)
-FetchContent_Declare( exiv2cmake URL https://www.exiv2.org/releases/exiv2-0.27.0-Source.tar.gz ) 
+FetchContent_Declare( exiv2cmake URL https://github.com/Exiv2/exiv2/releases/download/0.27/exiv2-0.27.0-Source.tar.gz ) 
 FetchContent_GetProperties( exiv2cmake )
-if ( NOT exiv2cmake_POPULATED )
-  FetchContent_Populate( exiv2cmake )
-endif()
+FetchContent_Populate( exiv2cmake )
+
 option( EXIV2_BUILD_SAMPLES "" OFF )
 option( EXIV2_BUILD_EXIV2_COMMAND "" OFF )
 add_subdirectory( ${exiv2cmake_SOURCE_DIR} ${exiv2cmake_BINARY_DIR} )
@@ -37,6 +36,13 @@ if( NOT SPINNAKER_LIB )
   message( FATAL_ERROR "You need to install the spinnaker library first: https://www.flir.ca/products/spinnaker-sdk/" )
 endif()
 set( SPINNAKER_LIB_INCLUDES "/opt/spinnaker/include" "/usr/include/spinnaker" )
+
+find_library( CPR_LIB "cpr" HINTS "/usr/local/lib" )
+
+include(FetchContent)
+FetchContent_Declare(cpr GIT_REPOSITORY https://github.com/libcpr/cpr.git
+                         GIT_TAG 21f42cf882d0b7e5ae9e3434574fc47e187728de) # The commit hash for 1.8.0. Replace with the latest from: https://github.com/libcpr/cpr/releases
+FetchContent_MakeAvailable(cpr)
 
 add_executable( skypasta
   ${CMAKE_SOURCE_DIR}/src/main.cpp
@@ -49,5 +55,5 @@ add_executable( skypasta
 )
 
 target_include_directories( skypasta SYSTEM PUBLIC ${SPINNAKER_LIB_INCLUDES} ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}/include )
-target_link_libraries( skypasta PUBLIC ${SPINNAKER_LIB} exiv2lib pthread opencv_core opencv_imgproc opencv_highgui opencv_ml opencv_video opencv_videoio opencv_imgcodecs )
+target_link_libraries( skypasta PUBLIC ${SPINNAKER_LIB} exiv2lib pthread opencv_core opencv_imgproc opencv_highgui opencv_ml opencv_video opencv_videoio opencv_imgcodecs ${CPR_LIB} cpr::cpr)
 target_compile_options( skypasta PUBLIC "-Wall" "-Wextra" )

@@ -4,19 +4,24 @@
 #include "ImageRetriever.h"
 #include "SpinGenApi/SpinnakerGenApi.h"
 #include "Telemetry.h"
+#include <chrono>
+#include <thread>
 
 constexpr int PORT = 5000;
 constexpr auto ADDRESS  = "127.0.0.1";
 constexpr int RATE = 2; // delay between each image acquisition trigger
 
 // This variable can be changed so that it is system dependent
-const int NUM_THREADS = 8; // max number of threads for getting images
+const int NUM_THREADS = 8; // max number of threads for getting images (only works for FLIR cameras)
 
 constexpr int SECONDS_TO_RUN = -1; // Set to -1 to run indefinitely
 
 const CameraType connectedCameraType = CameraType::GenericUSB;
 
+const bool TAG_IMAGE = true;
+
 using namespace std;
+using std::this_thread::sleep_for;
 
 bool stopFlag = false;
 
@@ -28,7 +33,7 @@ void acquireImagesFixedRate(int rate, ImageRetriever *imageRetriever)
     while (!stopFlag)
     {
         cout << "Acquiring Image" << endl;
-        auto triggerCameraOnceFuture(async(launch::async, &ImageRetriever::acquireImage, imageRetriever, true));
+        auto triggerCameraOnceFuture(async(launch::async, &ImageRetriever::acquireImage, imageRetriever));
         if (stopFlag)
         {
             break;
@@ -45,7 +50,7 @@ void acquireImages(ImageRetriever *imageRetriever)
 {
     while (!stopFlag)
     {
-        imageRetriever->acquireImage(connectedCameraType == CameraType::FLIR);
+        imageRetriever->acquireImage();
     }
 }
 
@@ -53,7 +58,6 @@ void acquireImages(ImageRetriever *imageRetriever)
 void readFromACOM(Telemetry *telemetry){
     int reconnectAttempts = 0;
 
-    cout << "Here:" << endl;
     while (!stopFlag){
         if (telemetry->readJsonFromAcom() == -1){
             cout << "Error with server, attempting to reconnect..." << endl;
@@ -71,7 +75,7 @@ void readFromACOM(Telemetry *telemetry){
         if (stopFlag){
             return;
         }
-        cout << endl;
+        sleep_for(std::chrono::milliseconds(116));
     }
 }
 
@@ -113,7 +117,7 @@ int main(int argc, char *argv[])
 
         cout << "Telemetry setup starting" << endl;
         Telemetry telemetry(ADDRESS,PORT, &imageTag);
-        telemetry.connectServer();
+        // telemetry.connectServer();
         
         // Change from read to socket to the HTTP GET
         auto readFromSocketFuture(async(launch::async, readFromACOM, &telemetry));
@@ -136,13 +140,13 @@ int main(int argc, char *argv[])
 
             cout << "ImageRetriever setup starting" << endl;
             
-            ImageRetriever imageRetriever(&imageTag, &flirCamera, imageFilePath);
+            ImageRetriever imageRetriever(&imageTag, &flirCamera, imageFilePath, TAG_IMAGE);
             cout << "ImageRetriever setup complete" << endl;
 
             thread threadList[NUM_THREADS];
             if (workingMode == Modes::triggerMode)
             {
-                threadList[0] = thread(acquireImagesFixedRate,  RATE, &imageRetriever);
+                threadList[0] = thread(acquireImagesFixedRate, RATE, &imageRetriever);
             }
             else if (workingMode == Modes::continuousMode) 
             {
@@ -183,7 +187,7 @@ int main(int argc, char *argv[])
             cout << "Generic USB camera setup complete" << endl;
 
             cout << "ImageRetriever setup starting" << endl;
-            ImageRetriever imageRetriever(&imageTag, &camera, imageFilePath);
+            ImageRetriever imageRetriever(&imageTag, &camera, imageFilePath, TAG_IMAGE);
             cout << "ImageRetriever setup complete" << endl;
 
             imageRetriever.startAcquisition();

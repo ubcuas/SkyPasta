@@ -16,7 +16,7 @@ class GenericUSBCamera
 public:
     GenericUSBCamera();
     bool captureImages();
-    bool getImage(cv::Mat *imagePtr);
+    bool getImage(cv::Mat *imagePtr, long *timestamp);
     bool openCamera();
     void closeCamera();
 

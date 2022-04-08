@@ -1,9 +1,11 @@
 #include "GenericUSBCamera.h"
 #include <iostream>
 #include <stdio.h>
+#include <chrono>
 
 using namespace cv;
 using namespace std;
+using namespace std::chrono;
 
 GenericUSBCamera::GenericUSBCamera()
 {   
@@ -51,13 +53,15 @@ void GenericUSBCamera::closeCamera()
  * Returns if the image is empty (image grab failed).
  * Parameters:
  * - imagePtr: Image pointer to be filled by the function
+ * - timestamp: Image timestamp in epoch to be filled by the function
  */
-bool GenericUSBCamera::getImage(Mat *imagePtr)
+bool GenericUSBCamera::getImage(Mat *imagePtr, long *timestamp)
 {
     Mat frame;
 
     // Waits until a frame is created (or times out)
     videoCapture >> frame;
+    int64_t triggerTime_ms = duration_cast< milliseconds >(system_clock::now().time_since_epoch()).count() /1000;
 
     if(frame.empty())
     {
@@ -65,5 +69,6 @@ bool GenericUSBCamera::getImage(Mat *imagePtr)
     }
 
     *imagePtr = frame;
+    *timestamp = triggerTime_ms;
     return true;
 }

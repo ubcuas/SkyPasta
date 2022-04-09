@@ -75,7 +75,7 @@ void readFromACOM(Telemetry *telemetry){
         if (stopFlag){
             return;
         }
-        sleep_for(std::chrono::milliseconds(116));
+        sleep_for(std::chrono::milliseconds(90));
     }
 }
 

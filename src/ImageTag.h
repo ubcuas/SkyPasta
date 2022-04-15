@@ -8,6 +8,10 @@
 #include <exiv2/exiv2.hpp>
 #include "LinkedList.h"
 #include <iomanip>
+#include <iostream>
+#include <iterator>
+#include <vector> // vector
+
 
 #ifndef SKYPASTA_IMAGETAG_H
 #define SKYPASTA_IMAGETAG_H
@@ -40,7 +44,8 @@ public:
 
 private:
     std::queue<ImageData> imageQueue;
-    LinkedList<TelemetryData> telemetryList;
+    // LinkedList<TelemetryData> telemetryList;
+    std::vector<TelemetryData> telemetryList;
 
     void sleepForNS(long sleepTime) const;
 

@@ -3,12 +3,15 @@
 //
 
 #include "ImageTag.h"
+#include <mutex>
 
-constexpr int errorMargin = 500;
+constexpr int errorMargin = 1;
 constexpr int errorMarginLarge = errorMargin*1.5;
 
 using namespace Spinnaker;
 using namespace std;
+std::mutex mtx;           // mutex for critical section
+
 
 namespace {
     // erases trailing 0 and decimals from given string
@@ -75,7 +78,9 @@ void ImageTag::addTelemetry(const char *telemetryData) {
     long timestamp_msg = telemetryJSON.at("timestamp");
     long timestamp_telem = telemetryJSON.at("timestamp");
 
-    telemetryList.push({telemetryDataString, timestamp_msg, timestamp_telem, lat, lon, heading, altitude_agl_m, altitude_msl_m});
+    // telemetryList.push({telemetryDataString, timestamp_msg, timestamp_telem, lat, lon, heading, altitude_agl_m, altitude_msl_m});
+    telemetryList.push_back({telemetryDataString, timestamp_msg, timestamp_telem, lat, lon, heading, altitude_agl_m, altitude_msl_m});
+    cout << "Adding Telem:" << timestamp_telem << endl;
 }
 
 // Find telemetry data for next image, and writes the data to UAS XMP Namespace on the image location
@@ -116,7 +121,10 @@ void ImageTag::processNextImage() {
         image.release();
         cout << "Wrote XMP data to " << imageLocation << endl;
         imageQueue.pop();
-        telemetryList.pop();
+        // telemetryList.pop();
+        // telemetryList.pop_back();
+    } else {
+        // cout<< "Trying to tag" << endl;
     }
 }
 
@@ -125,21 +133,43 @@ void ImageTag::processNextImage() {
 // Cycles through old telemetry data, and compares it to given timestamp_telem
 // Removes telemetry data which is too old to be relevant to the given image
 bool ImageTag::removeOldTelemData(long timestamp) {
+    if (telemetryList.empty()){
+        return true;
+    }
     long difference;
-    auto currentNode = telemetryList.front();
-    while (true) {
-        difference = findDifference(timestamp, currentNode->data);
-        cout << "Difference in remove: " << difference << endl;
+    // auto currentNode = telemetryList.front();
+    auto currentNode = telemetryList.begin();
+    difference = findDifference(timestamp, *currentNode);
+    cout << "Difference in remove: " << difference << endl;
 
-        if (difference < errorMarginLarge) {
-            telemetryList.setHead(currentNode);
-            return true;
-        }
-        if (!currentNode->next) {
+    if (difference < errorMarginLarge) {
+        return true;
+    }
+
+    mtx.lock();
+    while (true) {
+        // difference = findDifference(timestamp, currentNode->data);
+
+        // if (!currentNode->next) {
+        //     break;
+        // }
+        if (currentNode == telemetryList.end()){
             break;
         }
-        currentNode = currentNode->next;
+        // currentNode = currentNode->next;
+        currentNode = std::next(currentNode, 1);
+        telemetryList.erase(telemetryList.begin());
+
+        difference = findDifference(timestamp, *currentNode);
+        cout << "Difference in remove: " << difference << endl;
+        
+        if (difference < errorMarginLarge) {
+            mtx.unlock();
+            return true;
+        }
     }
+
+    mtx.unlock();
     return false;
 }
 
@@ -157,7 +187,8 @@ bool ImageTag::findTelemDataAtTimestamp(long timestamp, TelemetryData &telemetry
 
     // removes old telemetry data
     removeOldTelemData(timestamp);
-    auto currentDataNode = telemetryList.front();
+    // auto currentDataNode = telemetryList.front();
+    auto currentDataNode = telemetryList.begin();
     long currentDataDifference;
     long nextDataDifference = 0;
 
@@ -171,32 +202,40 @@ bool ImageTag::findTelemDataAtTimestamp(long timestamp, TelemetryData &telemetry
  * the one before it. if next is smaller than errorMargin, return next. Otherwise, run loop again.
  *
  */
+
+    mtx.lock();
     while (true) {
-        currentDataDifference = findDifference(timestamp, currentDataNode->data);
+        currentDataDifference = findDifference(timestamp, *currentDataNode);
 
         if (currentDataDifference < errorMargin) {
-            telemetryData = currentDataNode->data;
+            telemetryData = *currentDataNode;
+            mtx.unlock();
             return true;
 
-        } else if (currentDataNode->next) {
-            nextDataDifference = findDifference(timestamp, currentDataNode->next->data);
+        } else if (currentDataNode != telemetryList.end()) {
+            auto nextDataNode = std::next(currentDataNode, 1);
+            nextDataDifference = findDifference(timestamp, *nextDataNode);
             if (nextDataDifference < errorMargin) {
-                telemetryData = currentDataNode->next->data;
+                telemetryData = *nextDataNode;
+                mtx.unlock();
                 return true;
 
             } else if (nextDataDifference > currentDataDifference) {
-                telemetryData = currentDataNode->data;
+                telemetryData = *currentDataNode;
                 sleepForNS(90000000L);
+                mtx.unlock();
                 return true;
             }
             else {
-                currentDataNode = currentDataNode->next;
+                currentDataNode = nextDataNode;
             }
         } else {
             sleepForNS(130000000L);
+            mtx.unlock();
             return false;
         }
     }
+    mtx.unlock();
 }
 
 // sleep for specified duration in nanoseconds

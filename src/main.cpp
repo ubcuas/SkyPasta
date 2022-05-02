@@ -12,9 +12,9 @@ constexpr int RATE = 2; // delay between each image acquisition trigger
 // This variable can be changed so that it is system dependent
 const int NUM_THREADS = 8; // max number of threads for getting images
 
-constexpr int SECONDS_TO_RUN = -1; // Set to -1 to run indefinitely
+int secondsToRun = -1; // Set to -1 to run indefinitely
 
-const CameraType connectedCameraType = CameraType::GenericUSB;
+CameraType connectedCameraType = CameraType::GenericUSB;
 
 using namespace std;
 
@@ -93,7 +93,7 @@ void run()
     int count = 0;
     while(!stopFlag)
     {
-        if(count == SECONDS_TO_RUN) {stopFlag = true;} 
+        if(count == secondsToRun) {stopFlag = true;} 
         std::this_thread::sleep_for(std::chrono::milliseconds(1000)); 
         count++;
     }
@@ -103,6 +103,36 @@ int main(int argc, char *argv[])
 {
     try
     {
+        // Parsing the arguments
+        if(argc==1)
+        cout << "Running with default settings" << endl;
+        if(argc>=2)
+        {
+            for(int counter = 0; counter < argc; counter++)
+                switch (counter)
+                {
+                case 0:
+                    break;
+                case 1:
+                    if (argv[counter] == "flir")
+                    {
+                        cout << "Changing CameraType to FLIR" << endl;
+                        connectedCameraType = CameraType::FLIR;
+                    }
+                    else
+                    {
+                        cout << "Leaving CameraType as GenericUSB" << endl;
+                    }
+                    break;
+                case 2:
+                    cout << "Changing seconds to run to " << argv[counter] << endl;
+                    connectedCameraType = stoi(argv[counter]);
+                    break;
+                default:
+                    break;
+                }
+        }
+
         cout << "SkyPasta is booting up..." << endl;
 
         string imageFilePath = defaultImageFilePath;

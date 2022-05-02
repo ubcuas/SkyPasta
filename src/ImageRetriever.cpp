@@ -52,6 +52,8 @@ ImageRetriever::ImageRetriever(ImageTag *imageTag, GenericUSBCamera *genericUSBC
 void ImageRetriever::fileSetup()
 {
     mkdir(imageFilePath.c_str(), 0777); //Creating a directory with all the permissions
+
+    // Test the permissions
     FILE *tempFile = fopen((imageFilePath + "/test.txt").c_str(), "w+");
     if (tempFile == nullptr)
     {
@@ -59,6 +61,11 @@ void ImageRetriever::fileSetup()
     }
     fclose(tempFile);
     remove((imageFilePath + "/test.txt").c_str());
+
+    // Create subdirectories
+    mkdir((imageFilePath + "/Saving").c_str(), 0777); //Creating the folder where the images will be saved initally
+    mkdir((imageFilePath + "/Untagged").c_str(), 0777); //Creating the folder where the images will be moved to when they are finished being saved
+    mkdir((imageFilePath + "/Tagged").c_str(), 0777); //Creating the folder where the images will be moved to when they are tagged
 }
 
 // Sets AcquisitionMode. See FlirCamera::setTriggerType.
@@ -264,13 +271,31 @@ void ImageRetriever::getImage(string &imagePath, long * timestamp, bool getTimes
             throw e;
         }
 
+        imageNumber++
+
+        // Save image to the temporary saving location
         ostringstream filePath;
-        filePath << imageFilePath + "/" << acquisitionStartTime << "-" << imageNumber++ << ".jpg";
+        filePath << imageFilePath + "/" << acquisitionStartTime << "-" << imageNumber << ".jpg";
         convertedImage->Save(filePath.str().c_str());
         cout << "Image saved at " << filePath.str() << endl;
         imagePtr->Release();
 
-        imagePath = filePath.str();
+        // Move images when the save operation is complete
+        ostringstream newFilePath;
+        newFilePath << imageFilePath + "/Untagged/" << acquisitionStartTime << "-" << imageNumber << ".jpg";
+        try
+        {
+            filesystem::rename(filePath, newFilePath);
+        }
+        catch (filesystem::filesystem_error& e)
+        {
+            cout << e.what() << '\n';
+            imagePath = "";
+            return;
+        }
+        cout << "Image moved to " << newFilePath.str() << endl;
+
+        imagePath = newFilePath.str();
     }
     else if (cameraType == CameraType::GenericUSB)
     {

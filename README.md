@@ -89,6 +89,17 @@ make
 ./skypasta
 ```
 
+The images are initially saved at a folder called "Saving"
+
+Then they are moved to a folder called "Untagged" when they are fully saved but not tagged
+
+Then they are moved to a folder called "Tagged" when/if they are tagged with geolocation
+
+
+Optinal arguments:
+1. Connected camera type. Use "flir" to set to FLIR Camera, GenericUSB camera is used otherwise. Default: GenericUSB
+2. Seconds to run. Set the number of seconds the code should run for. Set to -1 to run indefinitely. Default: -1 
+
 ## Troubleshooting
 
 ---

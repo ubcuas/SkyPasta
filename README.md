@@ -98,7 +98,8 @@ Then they are moved to a folder called "Tagged" when/if they are tagged with geo
 
 Optinal arguments:
 1. Connected camera type. Use "flir" to set to FLIR Camera, GenericUSB camera is used otherwise. Default: GenericUSB
-2. Seconds to run. Set the number of seconds the code should run for. Set to -1 to run indefinitely. Default: -1 
+2. Tag images. Set to "tag" to tag images with geolocation Default: Not tagging images
+3. Seconds to run. Set the number of seconds the code should run for. Set to -1 to run indefinitely. Default: -1 
 
 ## Troubleshooting
 

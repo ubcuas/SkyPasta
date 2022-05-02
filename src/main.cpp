@@ -12,9 +12,9 @@ constexpr int RATE = 2; // delay between each image acquisition trigger
 // This variable can be changed so that it is system dependent
 const int NUM_THREADS = 8; // max number of threads for getting images
 
-int secondsToRun = -1; // Set to -1 to run indefinitely
-
 CameraType connectedCameraType = CameraType::GenericUSB;
+bool tagImages = false
+int secondsToRun = -1; // Set to -1 to run indefinitely
 
 using namespace std;
 
@@ -28,7 +28,7 @@ void acquireImagesFixedRate(int rate, ImageRetriever *imageRetriever)
     while (!stopFlag)
     {
         cout << "Acquiring Image" << endl;
-        auto triggerCameraOnceFuture(async(launch::async, &ImageRetriever::acquireImage, imageRetriever, true));
+        auto triggerCameraOnceFuture(async(launch::async, &ImageRetriever::acquireImage, imageRetriever, tagImages));
         if (stopFlag)
         {
             break;
@@ -45,7 +45,7 @@ void acquireImages(ImageRetriever *imageRetriever)
 {
     while (!stopFlag)
     {
-        imageRetriever->acquireImage(connectedCameraType == CameraType::FLIR);
+        imageRetriever->acquireImage(tagImages);
     }
 }
 
@@ -125,11 +125,22 @@ int main(int argc, char *argv[])
                     }
                     break;
                 case 2:
+                    if (argv[counter] == "tag")
+                    {
+                        cout << "Will attempt to tag images" << endl;
+                        tagImages = true;
+                    }
+                    else
+                    {
+                        cout << "Will NOT attempt to tag images" << endl;
+                    }
+                    break;
+                case 3:
                     cout << "Changing seconds to run to " << argv[counter] << endl;
                     connectedCameraType = stoi(argv[counter]);
                     break;
                 default:
-                    break;
+                    break; 
                 }
         }
 

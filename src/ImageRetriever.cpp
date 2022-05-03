@@ -276,20 +276,17 @@ void ImageRetriever::getImage(string &imagePath, long * timestamp, bool getTimes
 
         // Save image to the temporary saving location
         ostringstream filePath;
-        //filePath << imageFilePath + "/" << acquisitionStartTime << "-" << imageNumber << ".jpg";
-        filePath << acquisitionStartTime << "-" << imageNumber << ".jpg";
+        filePath << imageFilePath + "/" << acquisitionStartTime << "-" << imageNumber << ".jpg";
         convertedImage->Save(filePath.str().c_str());
         cout << "Image saved at " << filePath.str() << endl;
         imagePtr->Release();
 
         // Move images when the save operation is complete
         ostringstream newFilePath;
-        //newFilePath << imageFilePath + "/Untagged/" << acquisitionStartTime << "-" << imageNumber << ".jpg";
-        newFilePath << "Untagged/" << acquisitionStartTime << "-" << imageNumber << ".jpg";
+        newFilePath << imageFilePath + "/Untagged/" << acquisitionStartTime << "-" << imageNumber << ".jpg";
         try
         {
-            filesystem::path p = imageFilePath;
-            filesystem::rename(p/filePath, p/newFilePath);
+            filesystem::rename(filePath, newFilePath);
         }
         catch (filesystem::filesystem_error& e)
         {

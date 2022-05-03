@@ -2,6 +2,7 @@
 #include <thread>
 #include <experimental/filesystem>
 
+
 using namespace std;
 
 /* Initializes and ensures images can be saved by saving a test file and deleting it
@@ -286,7 +287,7 @@ void ImageRetriever::getImage(string &imagePath, long * timestamp, bool getTimes
         newFilePath << imageFilePath + "/Untagged/" << acquisitionStartTime << "-" << imageNumber << ".jpg";
         try
         {
-            filesystem::rename(filePath, newFilePath);
+            experimental::filesystem::rename(filePath, newFilePath);
         }
         catch (filesystem::filesystem_error& e)
         {

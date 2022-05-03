@@ -287,7 +287,7 @@ void ImageRetriever::getImage(string &imagePath, long * timestamp, bool getTimes
         newFilePath << imageFilePath + "/Untagged/" << acquisitionStartTime << "-" << imageNumber << ".jpg";
         try
         {
-            experimental::filesystem::rename(const filePath, const newFilePath);
+            experimental::filesystem::rename(filePath, newFilePath);
         }
         catch (experimental::filesystem::filesystem_error& e)
         {

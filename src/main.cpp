@@ -13,7 +13,7 @@ constexpr int RATE = 2; // delay between each image acquisition trigger
 const int NUM_THREADS = 8; // max number of threads for getting images
 
 CameraType connectedCameraType = CameraType::GenericUSB;
-bool tagImages = false
+bool tagImages = false;
 int secondsToRun = -1; // Set to -1 to run indefinitely
 
 using namespace std;
@@ -81,7 +81,7 @@ void readFromSocket(Telemetry *telemetry){
     }
 }
 
-void tagImages(ImageTag *imageTag){
+void doTagImages(ImageTag *imageTag){
     while(!stopFlag)
     {
        imageTag->processNextImage();
@@ -163,7 +163,7 @@ int main(int argc, char *argv[])
         telemetry.connectServer();
         
         auto readFromSocketFuture(async(launch::async, readFromSocket, &telemetry));
-        auto processNextImageFuture(async(launch::async, tagImages, &imageTag));
+        auto processNextImageFuture(async(launch::async, doTagImages, &imageTag));
         cout << "Telemetry setup complete" << endl;
 
         if (connectedCameraType == CameraType::FLIR)

@@ -312,7 +312,7 @@ void ImageRetriever::getImage(string &imagePath, long * timestamp, bool getTimes
             return;
         }
 
-        ostringstream filePath();
+        ostringstream filePath;
         filePath << imageFilePath << "/" << acquisitionStartTime << "-" << imageNumber++ << ".jpg";
         imwrite(filePath.str(), image);
 

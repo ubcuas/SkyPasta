@@ -287,7 +287,7 @@ void ImageRetriever::getImage(string &imagePath, long * timestamp, bool getTimes
         newFilePath << imageFilePath + "/Untagged/" << acquisitionStartTime << "-" << imageNumber << ".jpg";
         try
         {
-            experimental::filesystem::rename(experimental::filesystem::path(filePath), experimental::filesystem::path(newFilePath));
+            experimental::filesystem::rename(filePath, newFilePath); // make sure arguments are type filesystem::path, think that's the error
             
         }
         catch (experimental::filesystem::filesystem_error& e)

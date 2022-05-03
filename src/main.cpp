@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
                     break;
                 case 3:
                     cout << "Changing seconds to run to " << argv[counter] << endl;
-                    connectedCameraType = stoi(argv[counter]);
+                    connectedCameraType = CameraType(stoi(argv[counter]));
                     break;
                 default:
                     break; 

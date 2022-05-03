@@ -293,7 +293,7 @@ void ImageRetriever::getImage(string &imagePath, long * timestamp, bool getTimes
             // if rename does not throw error, then
             if (ec.value() != 0)
             {
-                cout << error_code::message(ec.value) << '\n';
+                cout << error_code::message(ec.value()) << '\n';
                 imagePath = "";
                 return;
             }

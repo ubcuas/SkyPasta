@@ -289,7 +289,7 @@ void ImageRetriever::getImage(string &imagePath, long * timestamp, bool getTimes
         {
             experimental::filesystem::rename(filePath, newFilePath);
         }
-        catch (filesystem::filesystem_error& e)
+        catch (experimental::filesystem::filesystem_error& e)
         {
             cout << e.what() << '\n';
             imagePath = "";

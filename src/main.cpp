@@ -1,5 +1,6 @@
 #include <iostream>
 #include <unistd.h>
+#include <string>
 #include <future>
 #include "ImageRetriever.h"
 #include "SpinGenApi/SpinnakerGenApi.h"

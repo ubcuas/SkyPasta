@@ -166,7 +166,7 @@ int main(int argc, char *argv[])
         auto processNextImageFuture(async(launch::async, doTagImages, &imageTag));
         cout << "Telemetry setup complete" << endl;
 
-        cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  connected camera type:" << connectedCameraType << endl;
+        //cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  connected camera type:" << connectedCameraType << endl;
 
         if (connectedCameraType == CameraType::FLIR)
         {

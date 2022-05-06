@@ -116,7 +116,7 @@ int main(int argc, char *argv[])
                 case 0:
                     break;
                 case 1:
-                    if (argv[counter].compare("flir") == 0)
+                    if (strcmp(argv[counter], "flir") == 0)
                     {
                         cout << "Changing CameraType to FLIR" << endl;
                         connectedCameraType = CameraType::FLIR;

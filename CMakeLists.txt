@@ -22,7 +22,7 @@ endif()
 # Libexiv2 dependency
 # Version 0.27.1 has an ARM compilation issue. The issue is fixed on a branch but a new version hasn't been released...
 include(FetchContent)
-FetchContent_Declare( exiv2cmake URL https://www.exiv2.org/releases/exiv2-0.27.0-Source.tar.gz ) 
+FetchContent_Declare( exiv2cmake URL https://github.com/Exiv2/exiv2/releases/download/0.27/exiv2-0.27.0-Source.tar.gz ) 
 FetchContent_GetProperties( exiv2cmake )
 if ( NOT exiv2cmake_POPULATED )
   FetchContent_Populate( exiv2cmake )

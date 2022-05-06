@@ -108,6 +108,7 @@ int main(int argc, char *argv[])
         cout << "Running with default settings" << endl;
         if(argc>=2)
         {
+            cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!" << argv[1]<< endl;
             for(int counter = 0; counter < argc; counter++)
                 switch (counter)
                 {
@@ -165,8 +166,6 @@ int main(int argc, char *argv[])
         auto readFromSocketFuture(async(launch::async, readFromSocket, &telemetry));
         auto processNextImageFuture(async(launch::async, doTagImages, &imageTag));
         cout << "Telemetry setup complete" << endl;
-
-        //cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  connected camera type:" << connectedCameraType << endl;
 
         if (connectedCameraType == CameraType::FLIR)
         {

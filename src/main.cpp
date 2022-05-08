@@ -46,7 +46,7 @@ void acquireImages(ImageRetriever *imageRetriever)
 {
     while (!stopFlag)
     {
-        sleep(500);
+        //sleep(500);
                 //std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
         imageRetriever->acquireImage(tagImages);

@@ -7,7 +7,7 @@ using namespace std;
 
 GenericUSBCamera::GenericUSBCamera()
 {   
-    videoCapture = VideoCapture(9, cv::CAP_ANY);
+    videoCapture = VideoCapture(8, cv::CAP_ANY);
 }
 
 /*
@@ -19,7 +19,7 @@ bool GenericUSBCamera::openCamera()
 {
     if (!videoCapture.isOpened())
     {
-        videoCapture.open(0, cv::CAP_ANY);
+        videoCapture.open(8, cv::CAP_ANY);
         if (!videoCapture.isOpened())
         {
             cout << "ERROR! Unable to open camera\n";

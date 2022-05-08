@@ -7,6 +7,9 @@ using namespace std;
 
 GenericUSBCamera::GenericUSBCamera()
 {   
+    int fps = 2;
+    cout << "!!!!!!!!!!!!!!!!!!! change to " << fps << endl;
+    videoCapture.set(CAP_PROP_FPS, fps);
     videoCapture = VideoCapture(8, cv::CAP_ANY);
 }
 
@@ -26,10 +29,10 @@ bool GenericUSBCamera::openCamera()
             return false;
         }
     }
-    cout << "!!!!!!!!!!!!!!!!!!! fps" << videoCapture.get(CAP_PROP_FPS) << endl;
-    int fps = 2;
-    cout << "!!!!!!!!!!!!!!!!!!! change to " << fps << endl;
-    videoCapture.set(CAP_PROP_FPS, fps);
+    //cout << "!!!!!!!!!!!!!!!!!!! fps" << videoCapture.get(CAP_PROP_FPS) << endl;
+    //int fps = 2;
+    //cout << "!!!!!!!!!!!!!!!!!!! change to " << fps << endl;
+    //videoCapture.set(CAP_PROP_FPS, fps);
     cout << "!!!!!!!!!!!!!!!!!!! fps is now" << videoCapture.get(CAP_PROP_FPS) << endl;
 
     return true;

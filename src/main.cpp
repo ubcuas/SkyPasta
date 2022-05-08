@@ -109,7 +109,6 @@ int main(int argc, char *argv[])
         cout << "Running with default settings" << endl;
         if(argc>=2)
         {
-            cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!" << argv[1]<< endl;
             for(int counter = 0; counter < argc; counter++)
                 switch (counter)
                 {

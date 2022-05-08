@@ -200,7 +200,6 @@ void ImageRetriever::startAcquisition()
     }
     else if (cameraType == CameraType::GenericUSB)
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
         if(!genericUSBCamera->openCamera())
         {
             isCameraBusy = false;

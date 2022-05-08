@@ -26,6 +26,7 @@ bool GenericUSBCamera::openCamera()
             return false;
         }
     }
+    cout << "!!!!!!!!!!!!!!!!!!! fr" << videoCapture.CAP_PROP_FPS << endl;
     return true;
 }
 

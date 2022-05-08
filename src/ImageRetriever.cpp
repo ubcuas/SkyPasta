@@ -65,9 +65,9 @@ void ImageRetriever::fileSetup()
     remove((imageFilePath + "/test.txt").c_str());
 
     // Create subdirectories
-    mkdir((imageFilePath + "/Saving").c_str(), 0777); //Creating the folder where the images will be saved initally
-    mkdir((imageFilePath + "/Untagged").c_str(), 0777); //Creating the folder where the images will be moved to when they are finished being saved
-    mkdir((imageFilePath + "/Tagged").c_str(), 0777); //Creating the folder where the images will be moved to when they are tagged
+    //mkdir((imageFilePath + "/Saving").c_str(), 0777); //Creating the folder where the images will be saved initally
+    //mkdir((imageFilePath + "/Untagged").c_str(), 0777); //Creating the folder where the images will be moved to when they are finished being saved
+    //mkdir((imageFilePath + "/Tagged").c_str(), 0777); //Creating the folder where the images will be moved to when they are tagged
 }
 
 // Sets AcquisitionMode. See FlirCamera::setTriggerType.

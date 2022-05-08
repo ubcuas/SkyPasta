@@ -7,7 +7,7 @@ using namespace std;
 
 GenericUSBCamera::GenericUSBCamera()
 {   
-    videoCapture = VideoCapture(0, cv::CAP_ANY);
+    videoCapture = VideoCapture(9, cv::CAP_ANY);
 }
 
 /*

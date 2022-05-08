@@ -317,6 +317,9 @@ void ImageRetriever::getImage(string &imagePath, long * timestamp, bool getTimes
 
         ostringstream filePath;
         filePath << imageFilePath << "/" << acquisitionStartTime << "-" << imageNumber++ << ".jpg";
+
+        cout << "saving image " << acquisitionStartTime << "-" << imageNumber++ << ".jpg" << endl;
+
         imwrite(filePath.str(), image);
 
         imagePath = filePath.str();

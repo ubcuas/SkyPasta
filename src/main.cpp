@@ -159,13 +159,13 @@ int main(int argc, char *argv[])
 
         ImageTag imageTag;
 
-        cout << "Telemetry setup starting" << endl;
-        Telemetry telemetry(ADDRESS,PORT, &imageTag);
-        telemetry.connectServer();
+        //cout << "Telemetry setup starting" << endl;
+        //Telemetry telemetry(ADDRESS,PORT, &imageTag);
+        //telemetry.connectServer();
         
-        auto readFromSocketFuture(async(launch::async, readFromSocket, &telemetry));
+        //auto readFromSocketFuture(async(launch::async, readFromSocket, &telemetry));
         auto processNextImageFuture(async(launch::async, doTagImages, &imageTag));
-        cout << "Telemetry setup complete" << endl;
+        //cout << "Telemetry setup complete" << endl;
 
         if (connectedCameraType == CameraType::FLIR)
         {

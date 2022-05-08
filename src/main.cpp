@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
                     }
                     break;
                 case 2:
-                    if (argv[counter] == "tag")
+                    if (strcmp(argv[counter], "tag") == 0)
                     {
                         cout << "Will attempt to tag images" << endl;
                         tagImages = true;

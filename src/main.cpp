@@ -49,7 +49,7 @@ void acquireImages(ImageRetriever *imageRetriever)
     while (!stopFlag)
     {
         // sleep(0.5); // for latency
-        std::this_thread::sleep_for(std::chrono::milliseconds(750));
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
         imageRetriever->acquireImage(tagImages);
     }

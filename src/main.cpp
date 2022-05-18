@@ -5,6 +5,8 @@
 #include "ImageRetriever.h"
 #include "SpinGenApi/SpinnakerGenApi.h"
 #include "Telemetry.h"
+#include <chrono>
+#include <thread>
 
 constexpr int PORT = 5000;
 constexpr auto ADDRESS  = "127.0.0.1";
@@ -46,7 +48,8 @@ void acquireImages(ImageRetriever *imageRetriever)
 {
     while (!stopFlag)
     {
-        sleep(0.5); // for latency
+        // sleep(0.5); // for latency
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
         imageRetriever->acquireImage(tagImages);
     }
